@@ -84,10 +84,10 @@ export default function HistoryDetail() {
         ) : analysis ? (
           <div className="bg-white rounded-lg shadow-md p-6 max-w-4xl mx-auto">
             <div className="mb-6">
-              <p className="text-sm text-gray-500 mb-2">
+              <p className="text-sm text-gray-500 mb-2 font-medium">
                 {new Date(analysis.created_at).toLocaleString('zh-TW')}
               </p>
-              <div className="w-full h-64 bg-gray-200 rounded-md overflow-hidden">
+              <div className="w-full h-auto md:h-64 bg-gray-200 rounded-md overflow-hidden">
                 <img
                   src={analysis.image_url}
                   alt="工地照片"
@@ -97,8 +97,8 @@ export default function HistoryDetail() {
             </div>
 
             <div className="mt-6">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-bold">分析結果</h3>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-2">
+                <h3 className="text-lg font-bold mb-2 md:mb-0">分析結果</h3>
                 <button
                   onClick={copyToClipboard}
                   className="text-sm py-1 px-3 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors duration-200"
@@ -106,7 +106,7 @@ export default function HistoryDetail() {
                   複製結果
                 </button>
               </div>
-              <div className="p-4 bg-gray-50 rounded-md border border-gray-200 whitespace-pre-wrap">
+              <div className="p-4 bg-gray-50 rounded-md border border-gray-200 whitespace-pre-wrap text-sm md:text-base leading-relaxed">
                 {analysis.analysis_text}
               </div>
             </div>

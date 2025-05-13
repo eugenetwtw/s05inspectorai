@@ -237,7 +237,8 @@ export default function Demo() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* 桌面版表格 - 只在中等尺寸以上顯示 */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200">
               <thead>
                 <tr>
@@ -301,6 +302,60 @@ export default function Demo() {
                 ))}
               </tbody>
             </table>
+          </div>
+          
+          {/* 手機版卡片佈局 - 只在小尺寸顯示 */}
+          <div className="md:hidden space-y-6">
+            {images.map((img, index) => (
+              <div key={img.id} className="border rounded-md p-4 bg-white">
+                {/* 檔案名稱 */}
+                <h3 className="font-medium text-gray-800 mb-3">
+                  {img.name}
+                </h3>
+                
+                {/* 照片 */}
+                <div className="w-full h-48 bg-gray-200 rounded-md overflow-hidden mb-4">
+                  <img
+                    src={img.url}
+                    alt={`工地照片 ${index + 1}`}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                
+                {/* 分析結果 */}
+                <div className="mt-3">
+                  <h4 className="text-sm font-medium text-gray-500 mb-2">分析結果</h4>
+                  {img.loading ? (
+                    <div className="text-center py-4">
+                      <div className="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
+                      <p className="mt-2 text-sm text-gray-500">分析中...</p>
+                    </div>
+                  ) : img.analysis ? (
+                    <div className="relative">
+                      <div className="p-3 bg-gray-50 rounded-md border border-gray-200 whitespace-pre-wrap max-h-64 overflow-y-auto text-sm leading-relaxed">
+                        {img.analysis}
+                      </div>
+                      <button
+                        onClick={() => copyToClipboard(img.analysis)}
+                        className="absolute top-2 right-2 p-1 bg-white rounded-md shadow-sm hover:bg-gray-100"
+                        title="複製結果"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => analyzeImage(index)}
+                      className="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md"
+                    >
+                      分析此照片
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           {error && (

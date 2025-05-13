@@ -15,6 +15,30 @@ body {
   box-sizing: border-box;
 }
 
+/* Responsive text styles */
+@layer base {
+  html {
+    font-size: 16px;
+  }
+  
+  p {
+    @apply leading-relaxed;
+  }
+  
+  @media (max-width: 640px) {
+    html {
+      font-size: 15px;
+    }
+  }
+}
+
+/* Responsive container styles */
+@layer components {
+  .container {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+}
+
 /* Custom button styles */
 .btn-primary {
   @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200;

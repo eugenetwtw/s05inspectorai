@@ -89,19 +89,30 @@ export default function History() {
                   className="border rounded-md p-4 cursor-pointer hover:bg-gray-50"
                   onClick={() => viewHistoryItem(item.id)}
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden flex-shrink-0">
+                  <div className="flex flex-col md:flex-row items-start gap-4">
+                    {/* 在手機上先顯示檔名/日期 */}
+                    <div className="w-full md:hidden mb-3">
+                      <p className="text-sm text-gray-500 font-medium">
+                        {new Date(item.created_at).toLocaleString('zh-TW')}
+                      </p>
+                    </div>
+                    
+                    {/* 圖片區域 - 在手機上寬度 100% */}
+                    <div className="w-full md:w-24 md:h-24 h-48 bg-gray-200 rounded overflow-hidden flex-shrink-0 mb-3 md:mb-0">
                       <img 
                         src={item.image_url} 
                         alt="分析照片" 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain md:object-cover"
                       />
                     </div>
+                    
+                    {/* 文字內容區域 */}
                     <div className="flex-grow">
-                      <p className="text-sm text-gray-500">
+                      {/* 在桌面版顯示日期 */}
+                      <p className="hidden md:block text-sm text-gray-500">
                         {new Date(item.created_at).toLocaleString('zh-TW')}
                       </p>
-                      <p className="text-sm line-clamp-3 mt-1">
+                      <p className="text-sm md:line-clamp-3 mt-1">
                         {item.analysis_text.substring(0, 200)}...
                       </p>
                     </div>
