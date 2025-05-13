@@ -1,23 +1,28 @@
 # 工地安全與品質檢查 AI
 
-這是一個使用 OpenAI 視覺模型來分析工地照片的應用程式，可以檢測安全衛生問題、施工瑕疵或施工錯誤。
+這是一個使用 OpenAI 視覺模型來分析工地照片的應用程式，可以檢測安全衛生問題、施工瑕疵或施工錯誤，並保存分析歷史記錄供用戶回顧。
 
 ## 功能
 
 - 上傳工地照片
-- 使用 OpenAI 的視覺模型 (o4-mini) 分析照片
+- 使用 OpenAI 的視覺模型 (GPT-4o) 分析照片
 - 檢測安全問題（如個人防護裝備使用、墜落危險等）
 - 檢測衛生問題（如工地整潔、廢棄物處理等）
 - 檢測施工品質問題（如施工瑕疵、材料使用等）
 - 提供改善建議
 - 複製分析結果功能
+- 用戶認證與登入系統
+- 保存分析歷史記錄
+- 查看歷史分析詳情
 
 ## 技術堆疊
 
 - Next.js
 - React
 - Tailwind CSS
-- OpenAI API (o4-mini 視覺模型)
+- OpenAI API (GPT-4o 視覺模型)
+- Clerk.com (用戶認證)
+- Neon Database (PostgreSQL)
 
 ## 安裝與設定
 
@@ -33,10 +38,24 @@ npm install
 ```
 
 3. 設定環境變數
-創建 `.env.local` 檔案並添加您的 OpenAI API 金鑰：
+創建 `.env.local` 檔案並添加以下環境變數：
+
 ```
+# OpenAI API
 OPENAI_API_KEY=your_openai_api_key
+
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+
+# Neon Database
+DATABASE_URL=your_neon_database_url
 ```
+
+您需要：
+- 在 [OpenAI](https://platform.openai.com/) 創建 API 金鑰
+- 在 [Clerk.com](https://clerk.com/) 創建應用程式並獲取 API 金鑰
+- 在 [Neon](https://neon.tech/) 創建 PostgreSQL 資料庫並獲取連接字串
 
 4. 啟動開發伺服器
 ```bash
