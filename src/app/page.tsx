@@ -10,37 +10,51 @@ import {
   SignInButton
 } from '@clerk/nextjs';
 
+type ImageItem = {
+  file: File;
+  url: string;
+  analysis: string;
+  loading: boolean;
+};
+
 export default function Home() {
-  const [image, setImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState('');
-  const [analysis, setAnalysis] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState<ImageItem[]>([]);
+  const [allLoading, setAllLoading] = useState(false);
   const [error, setError] = useState('');
   const { isSignedIn, user } = useUser();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setImageUrl(URL.createObjectURL(file));
-      setAnalysis('');
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const newImages: ImageItem[] = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        newImages.push({
+          file,
+          url: URL.createObjectURL(file),
+          analysis: '',
+          loading: false
+        });
+      }
+      
+      setImages(newImages);
       setError('');
     }
   };
 
-  const analyzeImage = async () => {
-    if (!image) {
-      setError('請先上傳工地照片');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-
+  const analyzeImage = async (index: number) => {
+    if (images[index].loading) return;
+    
+    setImages(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], loading: true };
+      return updated;
+    });
+    
     try {
-      // Upload the image for analysis
       const formData = new FormData();
-      formData.append('image', image);
+      formData.append('image', images[index].file);
 
       const response = await fetch('/api/analyze', {
         method: 'POST',
@@ -52,17 +66,53 @@ export default function Home() {
       }
 
       const data = await response.json();
-      setAnalysis(data.analysis);
+      
+      setImages(prev => {
+        const updated = [...prev];
+        updated[index] = { 
+          ...updated[index], 
+          analysis: data.analysis,
+          loading: false 
+        };
+        return updated;
+      });
     } catch (err: any) {
       console.error('Error analyzing image:', err);
       setError('分析照片時發生錯誤: ' + err.message);
-    } finally {
-      setLoading(false);
+      
+      setImages(prev => {
+        const updated = [...prev];
+        updated[index] = { ...updated[index], loading: false };
+        return updated;
+      });
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(analysis)
+  const analyzeAllImages = async () => {
+    if (images.length === 0) {
+      setError('請先上傳工地照片');
+      return;
+    }
+
+    setAllLoading(true);
+    setError('');
+
+    try {
+      for (let i = 0; i < images.length; i++) {
+        if (!images[i].analysis) {
+          await analyzeImage(i);
+        }
+      }
+    } catch (err: any) {
+      console.error('Error analyzing images:', err);
+      setError('分析照片時發生錯誤: ' + err.message);
+    } finally {
+      setAllLoading(false);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
       .then(() => {
         alert('分析結果已複製到剪貼簿');
       })
@@ -100,7 +150,7 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-md p-6 max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow-md p-6 max-w-6xl mx-auto">
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="image-upload">
               上傳工地照片
@@ -109,33 +159,93 @@ export default function Home() {
               id="image-upload"
               type="file"
               accept="image/*"
+              multiple
               onChange={handleImageChange}
               className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
 
-          {imageUrl && (
-            <div className="mb-6">
-              <p className="text-gray-700 text-sm font-bold mb-2">預覽照片</p>
-              <div className="relative w-full h-64 bg-gray-200 rounded-md overflow-hidden">
-                <img
-                  src={imageUrl}
-                  alt="工地照片預覽"
-                  className="absolute inset-0 w-full h-full object-contain"
-                />
+          {images.length > 0 && (
+            <>
+              <div className="mb-6">
+                <button
+                  onClick={analyzeAllImages}
+                  disabled={allLoading}
+                  className={`w-full py-2 px-4 rounded-md text-white font-medium ${
+                    allLoading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
+                  } transition-colors duration-200`}
+                >
+                  {allLoading ? '分析中...' : '一鍵分析所有照片'}
+                </button>
               </div>
-            </div>
-          )}
 
-          <button
-            onClick={analyzeImage}
-            disabled={loading}
-            className={`w-full py-2 px-4 rounded-md text-white font-medium ${
-              loading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
-            } transition-colors duration-200`}
-          >
-            {loading ? '分析中...' : '分析照片'}
-          </button>
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-white border border-gray-200">
+                  <thead>
+                    <tr>
+                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        檔案名稱
+                      </th>
+                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        照片
+                      </th>
+                      <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        分析結果
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {images.map((img, index) => (
+                      <tr key={index} className="border-b border-gray-200">
+                        <td className="py-2 px-4 text-sm">
+                          {img.file.name}
+                        </td>
+                        <td className="py-2 px-4">
+                          <div className="w-48 h-32 bg-gray-200 rounded-md overflow-hidden">
+                            <img
+                              src={img.url}
+                              alt={`工地照片 ${index + 1}`}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        </td>
+                        <td className="py-2 px-4">
+                          {img.loading ? (
+                            <div className="text-center py-4">
+                              <div className="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
+                              <p className="mt-2 text-sm text-gray-500">分析中...</p>
+                            </div>
+                          ) : img.analysis ? (
+                            <div className="relative">
+                              <div className="p-3 bg-gray-50 rounded-md border border-gray-200 whitespace-pre-wrap max-h-64 overflow-y-auto text-sm">
+                                {img.analysis}
+                              </div>
+                              <button
+                                onClick={() => copyToClipboard(img.analysis)}
+                                className="absolute top-2 right-2 p-1 bg-white rounded-md shadow-sm hover:bg-gray-100"
+                                title="複製結果"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => analyzeImage(index)}
+                              className="py-1 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md"
+                            >
+                              分析此照片
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
 
           {!isSignedIn && (
             <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
@@ -148,28 +258,11 @@ export default function Home() {
               {error}
             </div>
           )}
-
-          {analysis && (
-            <div className="mt-6">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-bold">分析結果</h3>
-                <button
-                  onClick={copyToClipboard}
-                  className="text-sm py-1 px-3 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors duration-200"
-                >
-                  複製結果
-                </button>
-              </div>
-              <div className="p-4 bg-gray-50 rounded-md border border-gray-200 whitespace-pre-wrap">
-                {analysis}
-              </div>
-            </div>
-          )}
         </div>
       </main>
 
       <footer className="text-center py-6 text-gray-500 text-sm">
-        © {new Date().getFullYear()} 工地安全與品質檢查 AI - 使用 OpenAI 視覺模型
+        © {new Date().getFullYear()} 工地安全與品質檢查 AI - 使用 AI 視覺模型
       </footer>
     </div>
   );

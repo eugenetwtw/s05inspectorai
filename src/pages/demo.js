@@ -133,7 +133,7 @@ export default function Demo() {
       </main>
 
       <footer className="text-center py-6 text-gray-500 text-sm">
-        © {new Date().getFullYear()} 工地安全與品質檢查 AI - 使用 OpenAI 視覺模型
+        © {new Date().getFullYear()} 工地安全與品質檢查 AI - 使用 AI 視覺模型
       </footer>
     </div>
   );
