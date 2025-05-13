@@ -84,3 +84,17 @@ body {
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Zoomable image styles */
+.image-zoomable {
+  @apply cursor-pointer transition-all duration-200;
+}
+
+.image-zoomable:hover {
+  @apply brightness-90;
+}
+
+.image-zoom-icon {
+  @apply absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1 text-white 
+         opacity-0 group-hover:opacity-100 transition-opacity duration-200;
+}

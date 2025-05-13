@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import ImageLightbox from '../../components/ImageLightbox';
 
 type DemoImageItem = {
   id: number;
@@ -25,6 +26,7 @@ export default function Demo() {
   ]);
   const [allLoading, setAllLoading] = useState(false);
   const [error, setError] = useState('');
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   // Predefined analysis result
   const demoAnalysisResult = `1. 照片概述：
@@ -260,12 +262,18 @@ export default function Demo() {
                       {img.name}
                     </td>
                     <td className="py-2 px-4">
-                      <div className="w-48 h-32 bg-gray-200 rounded-md overflow-hidden">
+                      <div className="w-48 h-32 bg-gray-200 rounded-md overflow-hidden relative group">
                         <img
                           src={img.url}
                           alt={`工地照片 ${index + 1}`}
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-contain image-zoomable"
+                          onClick={() => setLightboxImage(img.url)}
                         />
+                        <div className="image-zoom-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                          </svg>
+                        </div>
                       </div>
                     </td>
                     <td className="py-2 px-4">
@@ -314,12 +322,18 @@ export default function Demo() {
                 </h3>
                 
                 {/* 照片 */}
-                <div className="w-full h-48 bg-gray-200 rounded-md overflow-hidden mb-4">
+                <div className="w-full h-48 bg-gray-200 rounded-md overflow-hidden mb-4 relative group">
                   <img
                     src={img.url}
                     alt={`工地照片 ${index + 1}`}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain image-zoomable"
+                    onClick={() => setLightboxImage(img.url)}
                   />
+                  <div className="image-zoom-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </div>
                 </div>
                 
                 {/* 分析結果 */}
@@ -369,6 +383,13 @@ export default function Demo() {
       <footer className="text-center py-6 text-gray-500 text-sm">
         © {new Date().getFullYear()} 工地安全與品質檢查 AI - 使用 AI 視覺模型
       </footer>
+
+      {/* Lightbox for enlarged images */}
+      <ImageLightbox 
+        isOpen={lightboxImage !== null}
+        imageUrl={lightboxImage || ''}
+        onClose={() => setLightboxImage(null)}
+      />
     </div>
   );
 }
