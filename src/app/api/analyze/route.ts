@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { auth } from '@clerk/nextjs/server';
 import { saveAnalysisHistory, upsertUser } from '../../../lib/db';
-import fs from 'fs';
-import path from 'path';
+import { put } from '@vercel/blob';
 
 // Initialize OpenAI client with API key
 const openai = new OpenAI({
@@ -98,56 +97,47 @@ export async function POST(request: NextRequest) {
         // Ensure user exists in our database
         await upsertUser(userIdString, 'user@example.com'); // Email is not important for this demo
         
-        // Save image to a file
+        // Upload image to Vercel Blob instead of local filesystem
         const timestamp = Date.now();
         const filename = `${userIdString}_${timestamp}.${imageFile.type.split('/')[1]}`;
-        const imagePath = path.join(process.cwd(), 'public', 'uploads', filename);
         
-        // Ensure uploads directory exists
-        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-        if (!fs.existsSync(uploadsDir)) {
-          fs.mkdirSync(uploadsDir, { recursive: true });
-        }
+        // Upload to Vercel Blob
+        const blob = await put(filename, imageFile, {
+          access: 'public',
+        });
         
-        // Write the image file
-        fs.writeFileSync(imagePath, buffer);
-        
-        // Save analysis to database
-        const imageUrl = `/uploads/${filename}`;
+        // Save analysis to database with Blob URL
+        const imageUrl = blob.url;
         const metadata = {
           originalFilename: imageFile.name,
           mimeType: imageFile.type,
           size: imageFile.size,
-          timestamp
+          timestamp,
+          blobId: blob.url
         };
         
         await saveAnalysisHistory(userIdString, imageUrl, analysisText, metadata);
         saved = true;
         
-        console.log('Analysis saved to database');
+        console.log('Analysis saved to database with Blob URL:', imageUrl);
       } catch (dbError) {
         console.error('Error saving to database:', dbError);
         // Continue even if database save fails
       }
     } else {
-      // Save image to a temporary file (without user authentication)
+      // For unauthenticated users, we can still upload to Blob but won't save to DB
       try {
         const timestamp = Date.now();
         const filename = `temp_${timestamp}.${imageFile.type.split('/')[1]}`;
-        const imagePath = path.join(process.cwd(), 'public', 'uploads', filename);
         
-        // Ensure uploads directory exists
-        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-        if (!fs.existsSync(uploadsDir)) {
-          fs.mkdirSync(uploadsDir, { recursive: true });
-        }
+        // Upload to Vercel Blob
+        await put(filename, imageFile, {
+          access: 'public',
+        });
         
-        // Write the image file
-        fs.writeFileSync(imagePath, buffer);
-        
-        console.log('Image saved temporarily');
+        console.log('Image saved to Blob storage (temporary)');
       } catch (saveError) {
-        console.error('Error saving image:', saveError);
+        console.error('Error saving image to Blob:', saveError);
         // Continue even if image save fails
       }
     }

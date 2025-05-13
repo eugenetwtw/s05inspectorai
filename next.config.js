@@ -7,6 +7,10 @@ const nextConfig = {
   },
   // Set page extensions to only include App Router files
   pageExtensions: ['tsx', 'ts'],
+  // Add Blob storage domain to image domains
+  images: {
+    domains: ['yxzgfzz1qmz8m8cf.public.blob.vercel-storage.com'],
+  },
   // App Router is enabled by default in Next.js 13.4+
   // experimental: {
   //   appDir: true,
