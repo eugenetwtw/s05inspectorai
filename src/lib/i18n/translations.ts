@@ -84,6 +84,11 @@ export type TranslationKeys = {
   errorRestoringRecord: string;
   errorPermanentlyDeletingRecord: string;
   analyzedImageAlt: string;
+
+  // Homepage Hero Section
+  heroTitle: string;
+  heroSubtitle: string;
+  heroCTA: string; // Call to action, might be same as 'uploadPhotos' or new
 };
 
 export const translations: Record<Language, TranslationKeys> = {
@@ -245,6 +250,11 @@ export const translations: Record<Language, TranslationKeys> = {
     errorRestoringRecord: '無法恢復記錄',
     errorPermanentlyDeletingRecord: '無法永久刪除記錄',
     analyzedImageAlt: '分析圖片',
+
+    // Homepage Hero Section
+    heroTitle: '革命性的工地AI視覺分析師',
+    heroSubtitle: '即時洞察，提升安全，優化品質。上傳您的工地照片，體驗前所未有的智能檢測！',
+    heroCTA: '立即開始分析',
   },
   'zh-CN': {
     // Common
@@ -404,6 +414,11 @@ export const translations: Record<Language, TranslationKeys> = {
     errorRestoringRecord: '无法恢复记录',
     errorPermanentlyDeletingRecord: '无法永久删除记录',
     analyzedImageAlt: '分析图片',
+
+    // Homepage Hero Section
+    heroTitle: '革命性的工地AI视觉分析师',
+    heroSubtitle: '即时洞察，提升安全，优化品质。上传您的工地照片，体验前所未有的智能检测！',
+    heroCTA: '立即开始分析',
   },
   'en': {
     // Common
@@ -552,6 +567,11 @@ The photo shows concrete pouring work at a construction site, with a newly poure
     errorRestoringRecord: 'Failed to restore record(s)',
     errorPermanentlyDeletingRecord: 'Failed to permanently delete record(s)',
     analyzedImageAlt: 'Analyzed Image',
+
+    // Homepage Hero Section
+    heroTitle: 'Revolutionary Construction Site AI Vision Analyst',
+    heroSubtitle: 'Instant insights, enhanced safety, optimized quality. Upload your site photos and experience unprecedented intelligent inspection!',
+    heroCTA: 'Start Analyzing Now',
   },
   'de': {
     // Common
@@ -697,5 +717,10 @@ Das Foto zeigt Betonierarbeiten auf einer Baustelle.
     errorRestoringRecord: 'Einträge konnten nicht wiederhergestellt werden',
     errorPermanentlyDeletingRecord: 'Einträge konnten nicht endgültig gelöscht werden',
     analyzedImageAlt: 'Analysiertes Bild',
+
+    // Homepage Hero Section
+    heroTitle: 'Revolutionärer KI-Visionsanalyst für Baustellen',
+    heroSubtitle: 'Sofortige Einblicke, erhöhte Sicherheit, optimierte Qualität. Laden Sie Ihre Baustellenfotos hoch und erleben Sie eine beispiellose intelligente Inspektion!',
+    heroCTA: 'Jetzt analysieren',
   },
 };
