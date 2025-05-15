@@ -67,15 +67,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="zh-TW">
         <body>
-          <LanguageProvider>
-            <Suspense fallback={null}>
+          <Suspense fallback={null}>
+            <LanguageProvider>
               <AppHeader />
               <main>
                 {children}
               </main>
               <AppFooter />
-            </Suspense>
-          </LanguageProvider>
+            </LanguageProvider>
+          </Suspense>
           <Toaster position="top-center" />
         </body>
       </html>
