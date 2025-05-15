@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { auth } from '@clerk/nextjs/server';
-import { saveAnalysisHistory, upsertUser } from '../../../lib/db';
+import { saveAnalysisHistory, upsertUser } from '../../../lib';
 import { put } from '@vercel/blob';
 
 // Initialize OpenAI client with API key

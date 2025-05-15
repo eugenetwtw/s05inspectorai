@@ -6,7 +6,7 @@ import {
   executePermanentDeletion, // Use the new function
   // permanentlyDeleteAnalyses, // Comment out or remove old one
   cleanupOldTrashItems
-} from '../../../lib/db';
+} from '../../../lib';
 
 // Get trash items
 export async function GET(request: NextRequest) {

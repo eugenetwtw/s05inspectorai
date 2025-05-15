@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { getUserAnalysisHistory, moveAnalysesToTrash } from '../../../lib/db';
+import { getUserAnalysisHistory, moveAnalysesToTrash } from '../../../lib';
 
 export async function GET(request: NextRequest) {
   // Get user information from Clerk
