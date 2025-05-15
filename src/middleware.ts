@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-// Use Clerk's middleware directly without modification
+// Export Clerk's middleware directly
 export default clerkMiddleware();
 
 // Create a separate middleware function for language detection
