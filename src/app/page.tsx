@@ -1,17 +1,10 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { 
-  SignedIn, 
-  SignedOut, 
-  UserButton, 
-  useUser,
-  SignInButton
-} from '@clerk/nextjs';
+// Link, SignedIn, SignedOut, UserButton, SignInButton, LanguageSelector are no longer needed here as they are in AppHeader
+import { useUser } from '@clerk/nextjs'; // useUser might still be needed for user-specific logic on this page
 import ImageLightbox from '../components/ImageLightbox';
 import ReactMarkdown from 'react-markdown';
-import LanguageSelector from '../components/LanguageSelector';
 import { useLanguage } from '../lib/i18n/LanguageContext';
 import { useRouter } from 'next/navigation';
 
@@ -28,7 +21,7 @@ export default function Home() {
   const [error, setError] = useState('');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [batchNo, setBatchNo] = useState<string>('');
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn, user } = useUser(); // user might be used, isSignedIn is used below
   const { t, language } = useLanguage();
   const router = useRouter();
 
@@ -171,34 +164,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold">{t('appName')}</h1>
-          <div className="flex items-center gap-4">
-            <Link href="/demo" className="text-blue-600 hover:text-blue-800">
-              {t('demo')}
-            </Link>
-            <SignedIn>
-              <div className="flex items-center gap-4">
-                <Link href="/history" className="text-blue-600 hover:text-blue-800">
-                  {t('history')}
-                </Link>
-                <UserButton />
-              </div>
-            </SignedIn>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-                  {t('login')}
-                </button>
-              </SignInButton>
-            </SignedOut>
-            <LanguageSelector />
-          </div>
-        </div>
-      </header>
-
+    // The main div no longer needs min-h-screen if the layout handles it, but keeping for now.
+    // Header is removed, will be provided by RootLayout's AppHeader
+    <div className="min-h-screen bg-gray-100"> 
       <main className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-md p-6 max-w-6xl mx-auto">
           <div className="mb-6">
@@ -319,9 +287,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="text-center py-6 text-gray-500 text-sm">
-        {t('copyright')}
-      </footer>
+      {/* Footer is removed, will be provided by RootLayout's AppFooter */}
 
       {/* Lightbox for enlarged images */}
       <ImageLightbox 
