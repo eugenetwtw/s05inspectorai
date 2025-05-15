@@ -2,18 +2,18 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-// Export Clerk's middleware directly
+// Use Clerk's middleware directly without modification
 export default clerkMiddleware();
 
 // Create a separate middleware function for language detection
-export const middleware = (req: NextRequest) => {
+export function middleware(request: NextRequest) {
   // Check if the URL already has a language parameter
-  const url = req.nextUrl.clone();
+  const url = request.nextUrl.clone();
   const hasLangParam = url.searchParams.has('lang');
   
   // If the URL doesn't have a language parameter, add it based on the Accept-Language header
-  if (!hasLangParam && !req.nextUrl.pathname.startsWith('/api')) {
-    const acceptLanguage = req.headers.get('accept-language') || '';
+  if (!hasLangParam && !request.nextUrl.pathname.startsWith('/api')) {
+    const acceptLanguage = request.headers.get('accept-language') || '';
     let detectedLang = 'zh-TW'; // Default language
     
     if (acceptLanguage.includes('en')) {
@@ -35,7 +35,7 @@ export const middleware = (req: NextRequest) => {
   
   // If the URL already has a language parameter or it's an API route, continue with normal flow
   return NextResponse.next();
-};
+}
 
 export const config = {
   matcher: [
