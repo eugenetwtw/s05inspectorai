@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { getUserAnalysisHistory, moveAnalysesToTrash } from '../../../lib';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { getUserAnalysisHistory, moveAnalysesToTrash, upsertUser } from '../../../lib';
 
 export async function GET(request: NextRequest) {
   // Get user information from Clerk
@@ -10,6 +10,21 @@ export async function GET(request: NextRequest) {
   // Check if user is authenticated
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    // Get the full user data from Clerk
+    const user = await currentUser();
+    const email = user?.emailAddresses?.[0]?.emailAddress || '';
+    
+    if (email) {
+      // Upsert user to the database
+      await upsertUser(userId, email);
+    } else {
+      console.error('No email found for user:', userId);
+    }
+  } catch (error) {
+    console.error('Error synchronizing user in GET history:', error);
   }
 
   try {
