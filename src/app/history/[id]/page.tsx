@@ -22,7 +22,7 @@ export default function HistoryDetail() {
           throw new Error('無法獲取記錄詳細信息');
         }
         const data = await response.json();
-        setRecord(data.record || null);
+        setRecord(data.analysis || null);
       } catch (err) {
         setError(err instanceof Error ? err.message : '無法獲取記錄詳細信息');
       } finally {
