@@ -7,7 +7,7 @@ import { Language, translations, TranslationKeys } from './translations';
 type LanguageContextType = {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: keyof TranslationKeys) => string;
+  t: (key: keyof TranslationKeys, replacements?: Record<string, string>) => string; // Updated type definition
 };
 
 const defaultLanguage: Language = 'zh-TW';
