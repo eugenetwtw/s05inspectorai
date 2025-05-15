@@ -1,7 +1,55 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+// Create a language detection middleware
+function languageMiddleware(req: NextRequest) {
+  const url = req.nextUrl.clone();
+  
+  // Check if the URL already has a language parameter
+  const hasLangParam = url.searchParams.has('lang');
+  
+  // If the URL doesn't have a language parameter, add it based on the Accept-Language header
+  if (!hasLangParam && !req.nextUrl.pathname.startsWith('/api')) {
+    const acceptLanguage = req.headers.get('accept-language') || '';
+    let detectedLang = 'zh-TW'; // Default language
+    
+    if (acceptLanguage.includes('en')) {
+      detectedLang = 'en';
+    } else if (acceptLanguage.includes('zh')) {
+      if (acceptLanguage.includes('TW') || acceptLanguage.includes('HK')) {
+        detectedLang = 'zh-TW';
+      } else {
+        detectedLang = 'zh-CN';
+      }
+    }
+    
+    // Add the detected language as a query parameter
+    url.searchParams.set('lang', detectedLang);
+    
+    // Return the response with the modified URL
+    return NextResponse.redirect(url);
+  }
+  
+  // If the URL already has a language parameter or it's an API route, continue
+  return NextResponse.next();
+}
 
+// Export a default middleware function
+export default function middleware(req: NextRequest) {
+  // First apply language middleware
+  const languageResponse = languageMiddleware(req);
+  
+  // If language middleware redirected, return that response
+  if (languageResponse.status !== 200) {
+    return languageResponse;
+  }
+  
+  // Otherwise, continue with normal flow
+  return NextResponse.next();
+}
+
+// Use the same matcher configuration as before
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params

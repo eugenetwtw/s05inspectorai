@@ -11,6 +11,9 @@ import {
 } from '@clerk/nextjs';
 import ImageLightbox from '../components/ImageLightbox';
 import ReactMarkdown from 'react-markdown';
+import LanguageSelector from '../components/LanguageSelector';
+import { useLanguage } from '../lib/i18n/LanguageContext';
+import { useRouter } from 'next/navigation';
 
 type ImageItem = {
   file: File;
@@ -26,6 +29,8 @@ export default function Home() {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [batchNo, setBatchNo] = useState<string>('');
   const { isSignedIn, user } = useUser();
+  const { t } = useLanguage();
+  const router = useRouter();
 
   // Automatically sync user data to Supabase upon login
   useEffect(() => {
@@ -54,6 +59,11 @@ export default function Home() {
       console.log('User is not signed in, skipping sync.');
     }
   }, [isSignedIn]);
+
+  // Update document title when language changes
+  useEffect(() => {
+    document.title = t('appName');
+  }, [t]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -127,7 +137,7 @@ export default function Home() {
 
   const analyzeAllImages = async () => {
     if (images.length === 0) {
-      setError('請先上傳工地照片');
+      setError(t('uploadFirst'));
       return;
     }
 
@@ -142,7 +152,7 @@ export default function Home() {
       }
     } catch (err: any) {
       console.error('Error analyzing images:', err);
-      setError('分析照片時發生錯誤: ' + err.message);
+      setError(`${t('analysisError')}: ${err.message}`);
     } finally {
       setAllLoading(false);
     }
@@ -151,10 +161,10 @@ export default function Home() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
       .then(() => {
-        alert('分析結果已複製到剪貼簿');
+        alert(t('resultCopied'));
       })
       .catch(err => {
-        console.error('無法複製到剪貼簿:', err);
+        console.error('Unable to copy to clipboard:', err);
       });
   };
 
@@ -162,15 +172,15 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold">工地安全與品質檢查 AI</h1>
+          <h1 className="text-xl font-bold">{t('appName')}</h1>
           <div className="flex items-center gap-4">
             <Link href="/demo" className="text-blue-600 hover:text-blue-800">
-              查看示範
+              {t('demo')}
             </Link>
             <SignedIn>
               <div className="flex items-center gap-4">
                 <Link href="/history" className="text-blue-600 hover:text-blue-800">
-                  歷史記錄
+                  {t('history')}
                 </Link>
                 <UserButton />
               </div>
@@ -178,10 +188,11 @@ export default function Home() {
             <SignedOut>
               <SignInButton mode="modal">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-                  登入
+                  {t('login')}
                 </button>
               </SignInButton>
             </SignedOut>
+            <LanguageSelector />
           </div>
         </div>
       </header>
@@ -190,7 +201,7 @@ export default function Home() {
         <div className="bg-white rounded-lg shadow-md p-6 max-w-6xl mx-auto">
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="image-upload">
-              上傳工地照片
+              {t('uploadPhotos')}
             </label>
             <input
               id="image-upload"
@@ -212,7 +223,7 @@ export default function Home() {
                     allLoading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
                   } transition-colors duration-200`}
                 >
-                  {allLoading ? '分析中...' : '一鍵分析所有照片'}
+                  {allLoading ? t('analyzing') : t('analyzeAllPhotos')}
                 </button>
               </div>
 
@@ -221,13 +232,13 @@ export default function Home() {
                   <thead>
                     <tr>
                       <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        檔案名稱
+                        {t('fileName')}
                       </th>
                       <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        照片
+                        {t('photo')}
                       </th>
                       <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        分析結果
+                        {t('analysisResult')}
                       </th>
                     </tr>
                   </thead>
@@ -244,7 +255,7 @@ export default function Home() {
                           >
                             <img
                               src={img.url}
-                              alt={`工地照片 ${index + 1}`}
+                              alt={`${t('photo')} ${index + 1}`}
                               className="w-full h-full object-contain image-zoomable"
                             />
                             <div className="image-zoom-icon">
@@ -258,7 +269,7 @@ export default function Home() {
                           {img.loading ? (
                             <div className="text-center py-4">
                               <div className="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
-                              <p className="mt-2 text-sm text-gray-500">分析中...</p>
+                              <p className="mt-2 text-sm text-gray-500">{t('analyzing')}</p>
                             </div>
                           ) : img.analysis ? (
                             <div className="relative">
@@ -268,7 +279,7 @@ export default function Home() {
                               <button
                                 onClick={() => copyToClipboard(img.analysis)}
                                 className="absolute top-2 right-2 p-1 bg-white rounded-md shadow-sm hover:bg-gray-100"
-                                title="複製結果"
+                                title={t('copyResult')}
                               >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -280,7 +291,7 @@ export default function Home() {
                               onClick={() => analyzeImage(index)}
                               className="py-1 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md"
                             >
-                              分析此照片
+                              {t('analyzeThisPhoto')}
                             </button>
                           )}
                         </td>
@@ -294,7 +305,7 @@ export default function Home() {
 
           {!isSignedIn && (
             <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
-              <p>登入以保存分析結果</p>
+              <p>{t('loginToSave')}</p>
             </div>
           )}
 
@@ -307,7 +318,7 @@ export default function Home() {
       </main>
 
       <footer className="text-center py-6 text-gray-500 text-sm">
-        © {new Date().getFullYear()} 工地安全與品質檢查 AI - 使用 AI 視覺模型
+        {t('copyright')}
       </footer>
 
       {/* Lightbox for enlarged images */}

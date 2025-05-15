@@ -31,6 +31,18 @@ const nextConfig = {
   // experimental: {
   //   appDir: true,
   // },
+  
+  // Internationalization configuration
+  // We're handling i18n manually with URL parameters and context
+  // This is just to inform Next.js about our supported locales
+  i18n: {
+    // These are all the locales you want to support
+    locales: ['zh-TW', 'zh-CN', 'en'],
+    // The default locale is used when visiting a non-locale prefixed path
+    defaultLocale: 'zh-TW',
+    // We're not using the built-in locale detection, we're doing it manually
+    localeDetection: false,
+  },
 }
 
 module.exports = nextConfig
