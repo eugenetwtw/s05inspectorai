@@ -197,35 +197,61 @@ export async function permanentlyDeleteAnalyses(
   ids: number[], 
   userId: string
 ): Promise<boolean> {
+  console.log(`Attempting to permanently delete items with IDs: [${ids.join(', ')}] for user: ${userId}`);
   try {
-    // First get all the image URLs we need to delete
+    // First get all the image URLs and IDs we need to delete
     const itemsToDelete = await sql`
-      SELECT image_url FROM analysis_history
+      SELECT id, image_url FROM analysis_history
       WHERE id = ANY(${ids}) AND user_id = ${userId}
     `;
 
+    if (itemsToDelete.length === 0) {
+      console.log(`No items found matching IDs [${ids.join(', ')}] for user ${userId} to permanently delete.`);
+      // If no items are found, it could be that they were already deleted or IDs are incorrect.
+      // We can consider this a "success" in the sense that the desired state (items gone) is achieved.
+      return true; 
+    }
+
+    console.log(`Found ${itemsToDelete.length} items to permanently delete for user ${userId}.`);
+
     // Delete all blob files first
+    let blobDeletionAttempts = 0;
+    let blobDeletionSuccesses = 0;
     for (const item of itemsToDelete) {
       try {
         if (item.image_url) {
+          blobDeletionAttempts++;
           await del(item.image_url);
-          console.log('Deleted blob:', item.image_url);
+          console.log(`Successfully deleted blob: ${item.image_url} for item ID ${item.id}`);
+          blobDeletionSuccesses++;
         }
       } catch (blobError) {
-        console.error('Error deleting blob:', item.image_url, blobError);
+        console.error(`Error deleting blob: ${item.image_url} for item ID ${item.id}:`, blobError);
         // Continue even if blob deletion fails
       }
     }
+    console.log(`Blob deletion: ${blobDeletionSuccesses}/${blobDeletionAttempts} successful for user ${userId}.`);
 
-    // Then delete the database records (bypassing any retention checks)
-    await sql`
-      DELETE FROM analysis_history
-      WHERE id = ANY(${ids}) AND user_id = ${userId}
-    `;
+    // Then delete the database records
+    // We use the IDs from itemsToDelete to ensure we only try to delete records that were confirmed to exist for this user
+    const actualIdsToDelete = itemsToDelete.map(item => item.id);
+    if (actualIdsToDelete.length > 0) {
+      const deleteResult = await sql`
+        DELETE FROM analysis_history
+        WHERE id = ANY(${actualIdsToDelete}) AND user_id = ${userId}
+      `;
+      // Note: serverless-sql might not return affectedRows directly in deleteResult.
+      // A successful execution without an error implies success.
+      console.log(`Successfully deleted ${actualIdsToDelete.length} records from database for user ${userId}.`);
+    } else {
+      // This case should ideally not be reached if itemsToDelete was not empty,
+      // but as a safeguard:
+      console.log(`No database records to delete for user ${userId} after blob processing.`);
+    }
     
     return true;
   } catch (error) {
-    console.error('Error permanently deleting analyses:', error);
+    console.error(`Error in permanentlyDeleteAnalyses for user ${userId}, IDs [${ids.join(', ')}]:`, error);
     throw error;
   }
 }
@@ -235,11 +261,41 @@ export async function cleanupOldTrashItems(): Promise<boolean> {
   try {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    await sql`
-      DELETE FROM analysis_history
+
+    // Find items to delete
+    const itemsToClean = await sql`
+      SELECT id, image_url FROM analysis_history
       WHERE deleted = true AND deleted_at < ${thirtyDaysAgo}
     `;
+
+    if (itemsToClean.length === 0) {
+      console.log('No old trash items to clean up.');
+      return true;
+    }
+
+    console.log(`Found ${itemsToClean.length} old trash items to clean up.`);
+
+    // Delete blobs
+    for (const item of itemsToClean) {
+      try {
+        if (item.image_url) {
+          await del(item.image_url);
+          console.log('Cleaned up blob:', item.image_url);
+        }
+      } catch (blobError) {
+        console.error('Error cleaning up blob:', item.image_url, blobError);
+        // Continue even if blob deletion fails
+      }
+    }
+
+    // Delete database records
+    const idsToClean = itemsToClean.map(item => item.id);
+    await sql`
+      DELETE FROM analysis_history
+      WHERE id = ANY(${idsToClean})
+    `;
+    
+    console.log(`Successfully cleaned up ${idsToClean.length} old trash items from database.`);
     return true;
   } catch (error) {
     console.error('Error cleaning up old trash items:', error);
