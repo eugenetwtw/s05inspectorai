@@ -151,15 +151,16 @@ export async function moveAnalysesToTrash(
 ): Promise<boolean> {
   try {
     const now = new Date();
-    // Convert array to comma-separated string for the query
-    const idsParam = ids.join(',');
     
-    await sql`
-      UPDATE analysis_history
-      SET deleted = true, deleted_at = ${now}
-      WHERE id IN (SELECT unnest(string_to_array(${idsParam}, ',')::int[])) 
-      AND user_id = ${userId}
-    `;
+    // Process each ID individually to avoid array conversion issues
+    for (const id of ids) {
+      await sql`
+        UPDATE analysis_history
+        SET deleted = true, deleted_at = ${now}
+        WHERE id = ${id} AND user_id = ${userId}
+      `;
+    }
+    
     return true;
   } catch (error) {
     console.error('Error moving analyses to trash:', error);
@@ -173,15 +174,15 @@ export async function restoreAnalysesFromTrash(
   userId: string
 ): Promise<boolean> {
   try {
-    // Convert array to comma-separated string for the query
-    const idsParam = ids.join(',');
+    // Process each ID individually to avoid array conversion issues
+    for (const id of ids) {
+      await sql`
+        UPDATE analysis_history
+        SET deleted = false, deleted_at = null
+        WHERE id = ${id} AND user_id = ${userId}
+      `;
+    }
     
-    await sql`
-      UPDATE analysis_history
-      SET deleted = false, deleted_at = null
-      WHERE id IN (SELECT unnest(string_to_array(${idsParam}, ',')::int[])) 
-      AND user_id = ${userId}
-    `;
     return true;
   } catch (error) {
     console.error('Error restoring analyses from trash:', error);
@@ -195,14 +196,14 @@ export async function permanentlyDeleteAnalyses(
   userId: string
 ): Promise<boolean> {
   try {
-    // Convert array to comma-separated string for the query
-    const idsParam = ids.join(',');
+    // Process each ID individually to avoid array conversion issues
+    for (const id of ids) {
+      await sql`
+        DELETE FROM analysis_history
+        WHERE id = ${id} AND user_id = ${userId}
+      `;
+    }
     
-    await sql`
-      DELETE FROM analysis_history
-      WHERE id IN (SELECT unnest(string_to_array(${idsParam}, ',')::int[])) 
-      AND user_id = ${userId}
-    `;
     return true;
   } catch (error) {
     console.error('Error permanently deleting analyses:', error);
