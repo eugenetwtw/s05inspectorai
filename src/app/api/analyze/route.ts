@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { saveAnalysisHistory, upsertUser } from '../../../lib';
 import { put } from '@vercel/blob';
 
@@ -94,8 +94,17 @@ export async function POST(request: NextRequest) {
       try {
         // We know userId is not null here because we're inside the if (userId) block
         const userIdString: string = userId!;
+        // Get the full user data from Clerk
+        const user = await currentUser();
+        const email = user?.emailAddresses?.[0]?.emailAddress || '';
+        
         // Ensure user exists in our database
-        await upsertUser(userIdString, 'user@example.com'); // Email is not important for this demo
+        if (email) {
+          await upsertUser(userIdString, email);
+        } else {
+          console.error('No email found for user:', userIdString);
+          await upsertUser(userIdString, 'unknown@example.com'); // Fallback if email is not found
+        }
         
         // Upload image to Vercel Blob instead of local filesystem
         const timestamp = Date.now();
