@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import ReactMarkdown from 'react-markdown';
 import ImageLightbox from '../../components/ImageLightbox';
 
 type DemoImageItem = {
@@ -22,6 +23,13 @@ export default function Demo() {
       url: "/60254.jpg",
       analysis: "",
       loading: false
+    },
+    {
+      id: 2,
+      name: "施工現場.jpg",
+      url: "/60253.jpg",
+      analysis: "",
+      loading: false
     }
   ]);
   const [allLoading, setAllLoading] = useState(false);
@@ -29,63 +37,58 @@ export default function Demo() {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   // Predefined analysis result
-  const demoAnalysisResult = `1. 照片概述：
-照片顯示一根金屬支撐柱，上面纏繞著繩索或纖維材料作為加固或連接用途。支撐柱看起來位於一個建築工地內部，背景可見木板牆面和一些建築材料。
+  const demoAnalysisResult = `從公共安全和台灣工地相關法規的角度來看，這張照片顯示的工地存在以下安全風險：
 
-2. 安全問題分析：
-- 支撐柱的纏繞方式可能不符合標準規範，繩索纏繞不均勻，可能影響支撐強度
-- 未見明顯的安全標識或警示標記
-- 支撐柱周圍環境雜亂，可能存在絆倒風險
-- 無法確認支撐柱是否有適當的基座固定，可能存在穩定性問題
+1. **高處作業風險**：  
+   照片顯示一個深坑，沒有明顯的護欄或安全圍欄。根據台灣《職業安全衛生法》和《營造安全衛生設施標準》，高處作業（高度超過2公尺）必須設置護欄、蓋板或安全網，避免人員墜落。
 
-3. 衛生問題分析：
-- 工作區域有灰塵和碎屑堆積
-- 支撐柱表面有污漬和可能的鏽蝕
-- 周圍環境整潔度不足，可能影響工作效率和安全
+2. **地面雜物與絆倒風險**：  
+   坑底有木板、垃圾和其他雜物，容易造成工人絆倒或滑倒。《營造安全衛生設施標準》第4條規定，工地應保持整潔，避免散落物導致意外。
 
-4. 施工品質分析：
-- 支撐柱的纏繞工藝粗糙，不夠專業
-- 纏繞材料選擇可能不適合長期支撐用途
-- 支撐柱與周圍結構的連接方式不清晰，可能影響整體結構穩定性
-- 支撐柱表面處理不佳，可能影響使用壽命
+3. **結構穩定性問題**：  
+   混凝土牆上有突出的鋼筋，沒有妥善處理，可能刺傷工人或因結構不穩導致崩塌風險。根據法規，鋼筋端部應彎折或加裝保護蓋。
 
-5. 建議改善措施：
-- 重新評估支撐柱的設計和安裝方式，確保符合工程標準
-- 使用專業的緊固件和連接材料，而非簡易繩索纏繞
-- 清理工作區域，移除不必要的碎屑和障礙物
-- 為支撐結構添加適當的安全標識和警示標記
-- 定期檢查支撐結構的穩定性和完整性
-- 考慮使用防鏽和防腐處理，延長支撐結構的使用壽命
-- 確保所有工人了解正確的支撐結構安裝和維護程序`;
+4. **照明不足**：  
+   照片中光線昏暗，照明明顯不足。《營造安全衛生設施標準》第19條要求工地必須提供充足照明，確保工人能清楚辨識環境，避免意外。
+
+5. **缺乏安全警示**：  
+   沒有看到警示標誌或告示牌，提醒工人注意深坑危險。法規要求危險區域必須設置明顯的警示標誌。
+
+**建議改善措施**：  
+- 設置護欄或安全網，避免墜落。  
+- 清理地面雜物，保持工作區域整潔。  
+- 處理突出鋼筋，確保結構安全。  
+- 提供充足照明，確保工作環境安全。  
+- 設置警示標誌，提醒工人注意危險。
+
+這些問題若不改善，可能違反台灣的職業安全法規，並增加工地意外的風險。`;
 
   // Second demo analysis for additional images
-  const secondDemoAnalysisResult = `1. 照片概述：
-照片顯示一個建築工地的鋼筋結構，可見多根垂直鋼筋和水平連接件。工地似乎處於基礎或地下室施工階段。
+  const secondDemoAnalysisResult = `從公共安全和台灣工地相關法規的角度來看，這張照片顯示的工地存在以下安全風險：
 
-2. 安全問題分析：
-- 鋼筋頂端未加保護套，存在刺傷風險
-- 工作區域可能缺乏足夠的圍欄或警示標識
-- 鋼筋間距不均勻，可能影響結構穩定性
-- 未見工人使用適當的個人防護裝備
+1. **高處作業風險**：  
+   照片顯示一個深坑，沒有明顯的護欄或安全圍欄。根據台灣《職業安全衛生法》和《營造安全衛生設施標準》，高處作業（高度超過2公尺）必須設置護欄、蓋板或安全網，避免人員墜落。
 
-3. 衛生問題分析：
-- 工地地面有積水和泥濘，可能滋生蚊蟲
-- 建築材料堆放雜亂，未見適當的分類和覆蓋
-- 周圍環境有建築垃圾未及時清理
+2. **地面雜物與絆倒風險**：  
+   坑底有木板、垃圾和其他雜物，容易造成工人絆倒或滑倒。《營造安全衛生設施標準》第4條規定，工地應保持整潔，避免散落物導致意外。
 
-4. 施工品質分析：
-- 部分鋼筋彎曲角度不符合標準要求
-- 鋼筋綁扎不夠牢固，部分連接點鬆動
-- 混凝土澆築準備工作不充分，模板清理不徹底
-- 鋼筋間距不均勻，可能影響結構承載力
+3. **結構穩定性問題**：  
+   混凝土牆上有突出的鋼筋，沒有妥善處理，可能刺傷工人或因結構不穩導致崩塌風險。根據法規，鋼筋端部應彎折或加裝保護蓋。
 
-5. 建議改善措施：
-- 為所有外露鋼筋頂端加裝保護套，防止刺傷
-- 加強工地圍欄和警示標識，限制非施工人員進入
-- 重新檢查鋼筋綁扎質量，確保符合設計要求
-- 清理工地積水和垃圾，改善工作環境
-- 對施工人員進行安全培訓，強調個人防護裝備的重要性
-- 建立定期質量檢查機制，及時發現並糾正施工問題`;
+4. **照明不足**：  
+   照片中光線昏暗，照明明顯不足。《營造安全衛生設施標準》第19條要求工地必須提供充足照明，確保工人能清楚辨識環境，避免意外。
+
+5. **缺乏安全警示**：  
+   沒有看到警示標誌或告示牌，提醒工人注意深坑危險。法規要求危險區域必須設置明顯的警示標誌。
+
+**建議改善措施**：  
+- 設置護欄或安全網，避免墜落。  
+- 清理地面雜物，保持工作區域整潔。  
+- 處理突出鋼筋，確保結構安全。  
+- 提供充足照明，確保工作環境安全。  
+- 設置警示標誌，提醒工人注意危險。
+
+這些問題若不改善，可能違反台灣的職業安全法規，並增加工地意外的風險。`;
 
   // Third demo analysis
   const thirdDemoAnalysisResult = `1. 照片概述：
@@ -178,33 +181,6 @@ export default function Demo() {
       });
   };
 
-  const addDemoImage = () => {
-    // Add more demo images if there are less than 3
-    if (images.length < 3) {
-      const newImages = [...images];
-      
-      if (images.length === 1) {
-        newImages.push({
-          id: 2,
-          name: "鋼筋結構.jpg",
-          url: "/60254.jpg", // Using the same image for demo
-          analysis: "",
-          loading: false
-        });
-      } else if (images.length === 2) {
-        newImages.push({
-          id: 3,
-          name: "混凝土澆築.jpg",
-          url: "/60254.jpg", // Using the same image for demo
-          analysis: "",
-          loading: false
-        });
-      }
-      
-      setImages(newImages);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow-sm">
@@ -225,8 +201,6 @@ export default function Demo() {
             <p className="mb-4">這是一個示範頁面，展示多張照片上傳和分析功能。</p>
             
             <div className="flex space-x-4 mb-6">
-
-              
               <button
                 onClick={analyzeAllImages}
                 disabled={allLoading}
@@ -284,8 +258,10 @@ export default function Demo() {
                         </div>
                       ) : img.analysis ? (
                         <div className="relative">
-                          <div className="p-3 bg-gray-50 rounded-md border border-gray-200 whitespace-pre-wrap max-h-64 overflow-y-auto text-sm">
-                            {img.analysis}
+                          <div className="p-3 bg-gray-50 rounded-md border border-gray-200 max-h-64 overflow-y-auto text-sm prose prose-sm">
+                            <ReactMarkdown>
+                              {img.analysis}
+                            </ReactMarkdown>
                           </div>
                           <button
                             onClick={() => copyToClipboard(img.analysis)}
@@ -346,8 +322,10 @@ export default function Demo() {
                     </div>
                   ) : img.analysis ? (
                     <div className="relative">
-                      <div className="p-3 bg-gray-50 rounded-md border border-gray-200 whitespace-pre-wrap max-h-64 overflow-y-auto text-sm leading-relaxed">
-                        {img.analysis}
+                      <div className="p-3 bg-gray-50 rounded-md border border-gray-200 max-h-64 overflow-y-auto text-sm leading-relaxed prose prose-sm">
+                        <ReactMarkdown>
+                          {img.analysis}
+                        </ReactMarkdown>
                       </div>
                       <button
                         onClick={() => copyToClipboard(img.analysis)}
