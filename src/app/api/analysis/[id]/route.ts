@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { getAnalysisById } from '../../../../lib';
+import { getAnalysisById, sql } from '../../../../lib';
 
 export async function GET(
   request: NextRequest,

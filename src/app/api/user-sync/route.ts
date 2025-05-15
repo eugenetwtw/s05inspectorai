@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { upsertUser } from '../../../lib';
+import { upsertUser, sql } from '../../../lib';
 
 export async function POST() {
   // Get user information from Clerk
