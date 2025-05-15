@@ -28,6 +28,7 @@ export default function Home() {
   // Automatically sync user data to Supabase upon login
   useEffect(() => {
     if (isSignedIn) {
+      console.log('User is signed in, attempting to sync data to Supabase...');
       fetch('/api/user-sync', {
         method: 'POST',
         headers: {
@@ -36,7 +37,10 @@ export default function Home() {
       })
         .then(response => {
           if (!response.ok) {
-            console.error('Failed to sync user data:', response.statusText);
+            console.error('Failed to sync user data:', response.status, response.statusText);
+            return response.text().then(text => {
+              console.error('Response details:', text);
+            });
           } else {
             console.log('User data synced successfully');
           }
@@ -44,6 +48,8 @@ export default function Home() {
         .catch(err => {
           console.error('Error syncing user data:', err);
         });
+    } else {
+      console.log('User is not signed in, skipping sync.');
     }
   }, [isSignedIn]);
 
