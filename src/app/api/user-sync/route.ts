@@ -22,15 +22,17 @@ export async function POST() {
       return NextResponse.json({ error: 'User email not found' }, { status: 400 });
     }
     
+    console.log('Attempting to sync user data to Supabase for user ID:', userId, 'with email:', email);
     // Upsert user to the database
     await upsertUser(userId, email);
+    console.log('User data successfully synced to Supabase for user ID:', userId);
     
     return NextResponse.json({ success: true, message: 'User synchronized successfully' });
   } catch (error) {
     console.error('Error synchronizing user:', error);
     return NextResponse.json({
       error: 'Error synchronizing user',
-      details: error.message,
+      details: error.message || String(error),
     }, { status: 500 });
   }
 }
