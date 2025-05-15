@@ -23,8 +23,12 @@ export async function GET(
       return NextResponse.json({ error: '未提供分析ID' }, { status: 400 });
     }
     
+    // Check if we should include deleted items
+    const searchParams = request.nextUrl.searchParams;
+    const includeDeleted = searchParams.get('includeDeleted') === 'true';
+    
     // Get the analysis
-    const analysis = await getAnalysisById(id, userId);
+    const analysis = await getAnalysisById(id, userId, includeDeleted);
     
     if (!analysis) {
       return NextResponse.json({ error: '找不到分析記錄' }, { status: 404 });

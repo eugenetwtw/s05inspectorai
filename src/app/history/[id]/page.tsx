@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
+import { toast } from 'react-hot-toast';
 import ImageLightbox from '../../../components/ImageLightbox';
 
 export default function HistoryDetail() {
@@ -33,11 +34,20 @@ export default function HistoryDetail() {
   const fetchAnalysis = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/analysis/${id}`);
+      // Add includeDeleted=true parameter to also fetch deleted items
+      const response = await fetch(`/api/analysis/${id}?includeDeleted=true`);
       if (!response.ok) {
         throw new Error('Failed to fetch analysis');
       }
       const data = await response.json();
+      
+      if (data.analysis && data.analysis.deleted) {
+        // If the item is deleted, redirect to history page
+        toast.error('此記錄已被刪除，請從回收桶中恢復');
+        router.push('/history');
+        return;
+      }
+      
       setAnalysis(data.analysis);
     } catch (err) {
       console.error('Error fetching analysis:', err);

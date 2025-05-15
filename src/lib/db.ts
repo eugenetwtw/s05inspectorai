@@ -13,6 +13,8 @@ export interface AnalysisHistory {
   image_url: string;
   analysis_text: string;
   created_at: string;
+  deleted: boolean;
+  deleted_at: string | null;
   metadata: any;
 }
 
@@ -39,9 +41,22 @@ export async function initializeDatabase(): Promise<boolean> {
         image_url TEXT NOT NULL,
         analysis_text TEXT NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        deleted BOOLEAN DEFAULT FALSE,
+        deleted_at TIMESTAMP WITH TIME ZONE,
         metadata JSONB
       )
     `;
+
+    // Add deleted and deleted_at columns if they don't exist
+    try {
+      await sql`
+        ALTER TABLE analysis_history 
+        ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE,
+        ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITH TIME ZONE
+      `;
+    } catch (error) {
+      console.error('Error adding columns to analysis_history:', error);
+    }
 
     console.log('Database schema initialized successfully');
     return true;
@@ -92,12 +107,14 @@ export async function saveAnalysisHistory(
 export async function getUserAnalysisHistory(
   userId: string, 
   limit: number = 10, 
-  offset: number = 0
+  offset: number = 0,
+  showDeleted: boolean = false
 ): Promise<any[]> {
   try {
     const result = await sql`
       SELECT * FROM analysis_history
       WHERE user_id = ${userId}
+      AND deleted = ${showDeleted}
       ORDER BY created_at DESC
       LIMIT ${limit} OFFSET ${offset}
     `;
@@ -111,16 +128,101 @@ export async function getUserAnalysisHistory(
 // Function to get a specific analysis by ID
 export async function getAnalysisById(
   id: string | number, 
-  userId: string
+  userId: string,
+  includeDeleted: boolean = false
 ): Promise<any | null> {
   try {
-    const result = await sql`
-      SELECT * FROM analysis_history
-      WHERE id = ${id} AND user_id = ${userId}
-    `;
+    const query = includeDeleted 
+      ? sql`SELECT * FROM analysis_history WHERE id = ${id} AND user_id = ${userId}`
+      : sql`SELECT * FROM analysis_history WHERE id = ${id} AND user_id = ${userId} AND deleted = false`;
+    
+    const result = await query;
     return result[0] || null;
   } catch (error) {
     console.error('Error getting analysis by ID:', error);
+    throw error;
+  }
+}
+
+// Function to mark analyses as deleted (move to trash)
+export async function moveAnalysesToTrash(
+  ids: number[], 
+  userId: string
+): Promise<boolean> {
+  try {
+    const now = new Date();
+    // Convert array to comma-separated string for the query
+    const idsParam = ids.join(',');
+    
+    await sql`
+      UPDATE analysis_history
+      SET deleted = true, deleted_at = ${now}
+      WHERE id IN (SELECT unnest(string_to_array(${idsParam}, ',')::int[])) 
+      AND user_id = ${userId}
+    `;
+    return true;
+  } catch (error) {
+    console.error('Error moving analyses to trash:', error);
+    throw error;
+  }
+}
+
+// Function to restore analyses from trash
+export async function restoreAnalysesFromTrash(
+  ids: number[], 
+  userId: string
+): Promise<boolean> {
+  try {
+    // Convert array to comma-separated string for the query
+    const idsParam = ids.join(',');
+    
+    await sql`
+      UPDATE analysis_history
+      SET deleted = false, deleted_at = null
+      WHERE id IN (SELECT unnest(string_to_array(${idsParam}, ',')::int[])) 
+      AND user_id = ${userId}
+    `;
+    return true;
+  } catch (error) {
+    console.error('Error restoring analyses from trash:', error);
+    throw error;
+  }
+}
+
+// Function to permanently delete analyses
+export async function permanentlyDeleteAnalyses(
+  ids: number[], 
+  userId: string
+): Promise<boolean> {
+  try {
+    // Convert array to comma-separated string for the query
+    const idsParam = ids.join(',');
+    
+    await sql`
+      DELETE FROM analysis_history
+      WHERE id IN (SELECT unnest(string_to_array(${idsParam}, ',')::int[])) 
+      AND user_id = ${userId}
+    `;
+    return true;
+  } catch (error) {
+    console.error('Error permanently deleting analyses:', error);
+    throw error;
+  }
+}
+
+// Function to clean up old trash items (older than 30 days)
+export async function cleanupOldTrashItems(): Promise<boolean> {
+  try {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    await sql`
+      DELETE FROM analysis_history
+      WHERE deleted = true AND deleted_at < ${thirtyDaysAgo}
+    `;
+    return true;
+  } catch (error) {
+    console.error('Error cleaning up old trash items:', error);
     throw error;
   }
 }
