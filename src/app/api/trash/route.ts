@@ -51,14 +51,46 @@ export async function PUT(request: NextRequest) {
 
   try {
     // Get the IDs to restore from the request body
-    const { ids } = await request.json();
-    
-    if (!ids || !Array.isArray(ids) || ids.length === 0) {
-      return NextResponse.json({ error: '無效的請求參數' }, { status: 400 });
+    let body;
+    try {
+      body = await request.json();
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      return NextResponse.json({ 
+        error: '無效的請求格式',
+        details: 'Request body is not valid JSON'
+      }, { status: 400 });
     }
     
-    // Restore the analyses from trash
-    await restoreAnalysesFromTrash(ids, userId);
+    const { ids } = body;
+    
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ 
+        error: '無效的請求參數',
+        details: 'ids parameter must be a non-empty array'
+      }, { status: 400 });
+    }
+    
+    console.log('Restoring items from trash:', ids);
+    
+    // Process each ID individually to avoid errors
+    for (const id of ids) {
+      try {
+        // Convert id to number if it's a string
+        const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+        
+        if (isNaN(numericId)) {
+          console.error(`Invalid ID format: ${id}`);
+          continue;
+        }
+        
+        // Restore the analysis from trash
+        await restoreAnalysesFromTrash([numericId], userId);
+      } catch (idError) {
+        console.error(`Error processing ID ${id}:`, idError);
+        // Continue with other IDs even if one fails
+      }
+    }
     
     // Return success
     return NextResponse.json({ success: true });
@@ -84,14 +116,46 @@ export async function DELETE(request: NextRequest) {
 
   try {
     // Get the IDs to delete from the request body
-    const { ids } = await request.json();
-    
-    if (!ids || !Array.isArray(ids) || ids.length === 0) {
-      return NextResponse.json({ error: '無效的請求參數' }, { status: 400 });
+    let body;
+    try {
+      body = await request.json();
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      return NextResponse.json({ 
+        error: '無效的請求格式',
+        details: 'Request body is not valid JSON'
+      }, { status: 400 });
     }
     
-    // Permanently delete the analyses
-    await permanentlyDeleteAnalyses(ids, userId);
+    const { ids } = body;
+    
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ 
+        error: '無效的請求參數',
+        details: 'ids parameter must be a non-empty array'
+      }, { status: 400 });
+    }
+    
+    console.log('Permanently deleting items:', ids);
+    
+    // Process each ID individually to avoid errors
+    for (const id of ids) {
+      try {
+        // Convert id to number if it's a string
+        const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+        
+        if (isNaN(numericId)) {
+          console.error(`Invalid ID format: ${id}`);
+          continue;
+        }
+        
+        // Permanently delete the analysis
+        await permanentlyDeleteAnalyses([numericId], userId);
+      } catch (idError) {
+        console.error(`Error processing ID ${id}:`, idError);
+        // Continue with other IDs even if one fails
+      }
+    }
     
     // Return success
     return NextResponse.json({ success: true });

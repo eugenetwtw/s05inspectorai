@@ -91,9 +91,17 @@ export default function MockHistory() {
     
     setIsDeleting(true);
     try {
+      // Simulate a short delay to mimic API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Mock moving items to trash
       const now = new Date().toISOString();
       const itemsToMove = history.filter(item => selectedItems.includes(item.id));
+      
+      if (itemsToMove.length === 0) {
+        throw new Error('No items found with the selected IDs');
+      }
+      
       const updatedItems = itemsToMove.map(item => ({
         ...item,
         deleted: true,
@@ -119,8 +127,16 @@ export default function MockHistory() {
     
     setIsRestoring(true);
     try {
+      // Simulate a short delay to mimic API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Mock restoring items from trash
       const itemsToRestore = trashItems.filter(item => selectedItems.includes(item.id));
+      
+      if (itemsToRestore.length === 0) {
+        throw new Error('No items found with the selected IDs');
+      }
+      
       const updatedItems = itemsToRestore.map(item => ({
         ...item,
         deleted: false,
@@ -150,6 +166,16 @@ export default function MockHistory() {
     
     setIsDeleting(true);
     try {
+      // Simulate a short delay to mimic API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Check if items exist
+      const itemsToDelete = trashItems.filter(item => selectedItems.includes(item.id));
+      
+      if (itemsToDelete.length === 0) {
+        throw new Error('No items found with the selected IDs');
+      }
+      
       // Mock permanently deleting items
       setTrashItems(prev => prev.filter(item => !selectedItems.includes(item.id)));
       
