@@ -190,18 +190,40 @@ export async function restoreAnalysesFromTrash(
   }
 }
 
+import { del } from '@vercel/blob';
+
 // Function to permanently delete analyses
 export async function permanentlyDeleteAnalyses(
   ids: number[], 
   userId: string
 ): Promise<boolean> {
   try {
+    // First get all the image URLs we need to delete
+    const itemsToDelete = await sql`
+      SELECT image_url FROM analysis_history
+      WHERE id = ANY(${ids}) AND user_id = ${userId}
+    `;
+
     // Process each ID individually to avoid array conversion issues
     for (const id of ids) {
+      // Delete the database record
       await sql`
         DELETE FROM analysis_history
         WHERE id = ${id} AND user_id = ${userId}
       `;
+    }
+
+    // Delete all blob files
+    for (const item of itemsToDelete) {
+      try {
+        if (item.image_url) {
+          await del(item.image_url);
+          console.log('Deleted blob:', item.image_url);
+        }
+      } catch (blobError) {
+        console.error('Error deleting blob:', item.image_url, blobError);
+        // Continue even if blob deletion fails
+      }
     }
     
     return true;
