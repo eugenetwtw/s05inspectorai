@@ -10,11 +10,6 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 
-// Default metadata (will be overridden by client components using translations)
-export const metadata: Metadata = {
-  title: "工地安全與品質檢查 AI",
-  description: "使用 AI 視覺模型分析工地照片，檢查安全衛生問題、施工瑕疵或錯誤",
-};
 
 function AppHeader() {
   const { t } = useLanguage();
