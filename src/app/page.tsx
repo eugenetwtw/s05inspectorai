@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   SignedIn, 
@@ -24,6 +24,28 @@ export default function Home() {
   const [error, setError] = useState('');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const { isSignedIn, user } = useUser();
+
+  // Automatically sync user data to Supabase upon login
+  useEffect(() => {
+    if (isSignedIn) {
+      fetch('/api/user-sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => {
+          if (!response.ok) {
+            console.error('Failed to sync user data:', response.statusText);
+          } else {
+            console.log('User data synced successfully');
+          }
+        })
+        .catch(err => {
+          console.error('Error syncing user data:', err);
+        });
+    }
+  }, [isSignedIn]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
