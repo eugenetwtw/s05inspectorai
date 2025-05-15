@@ -30,6 +30,15 @@ export type TranslationKeys = {
   
   // Footer
   copyright: string;
+
+  // Demo Page Specific
+  demoPageTitle: string;
+  demoFeatureTitle: string;
+  demoFeatureDescription: string;
+  demoNote: string;
+  analyzeAllPhotosDemo: string;
+  analyzeThisPhotoDemo: string;
+  sitePhotoAlt: string;
 };
 
 export const translations: Record<Language, TranslationKeys> = {
@@ -61,6 +70,15 @@ export const translations: Record<Language, TranslationKeys> = {
     
     // Footer
     copyright: '© {year} 工地安全與品質檢查 AI - 使用 AI 視覺模型',
+
+    // Demo Page Specific
+    demoPageTitle: '示範頁面 - 工地 AI 檢查',
+    demoFeatureTitle: '示範功能',
+    demoFeatureDescription: '這是一個示範頁面，展示多張照片上傳和分析功能。',
+    demoNote: '注意：這是示範頁面，使用的是模擬數據。查看實際的分析歷史記錄，請訪問', // "歷史記錄頁面" part is a link, handled in component
+    analyzeAllPhotosDemo: '一鍵分析所有示範照片',
+    analyzeThisPhotoDemo: '分析此示範照片',
+    sitePhotoAlt: '工地照片示範',
   },
   'zh-CN': {
     // Common
@@ -90,6 +108,15 @@ export const translations: Record<Language, TranslationKeys> = {
     
     // Footer
     copyright: '© {year} 工地安全与品质检查 AI - 使用 AI 视觉模型',
+
+    // Demo Page Specific
+    demoPageTitle: '示范页面 - 工地 AI 检查',
+    demoFeatureTitle: '示范功能',
+    demoFeatureDescription: '这是一个示范页面，展示多张照片上传和分析功能。',
+    demoNote: '注意：这是示范页面，使用的是模拟数据。查看实际的分析历史记录，请访问',
+    analyzeAllPhotosDemo: '一键分析所有示范照片',
+    analyzeThisPhotoDemo: '分析此示范照片',
+    sitePhotoAlt: '工地照片示范',
   },
   'en': {
     // Common
@@ -119,5 +146,14 @@ export const translations: Record<Language, TranslationKeys> = {
     
     // Footer
     copyright: '© {year} Construction Site Safety & Quality Inspection AI - Using AI Vision Models',
+
+    // Demo Page Specific
+    demoPageTitle: 'Demo Page - Site AI Inspection',
+    demoFeatureTitle: 'Demo Feature',
+    demoFeatureDescription: 'This is a demo page showcasing multi-photo upload and analysis functionality.',
+    demoNote: 'Note: This is a demo page using mock data. To view actual analysis history, please visit the',
+    analyzeAllPhotosDemo: 'Analyze All Demo Photos',
+    analyzeThisPhotoDemo: 'Analyze This Demo Photo',
+    sitePhotoAlt: 'Site Photo Demo',
   },
 };

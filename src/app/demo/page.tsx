@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Added useEffect for potential title updates
 import Head from 'next/head';
 import Link from 'next/link';
+import { useLanguage } from '../../lib/i18n/LanguageContext'; // Import useLanguage
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import ImageLightbox from '../../components/ImageLightbox';
@@ -35,6 +36,12 @@ export default function Demo() {
   const [allLoading, setAllLoading] = useState(false);
   const [error, setError] = useState('');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const { t, language } = useLanguage(); // Initialize useLanguage
+
+  useEffect(() => {
+    // Optionally update document title if this page should have a translated title
+    document.title = t('demoPageTitle') || "Demo Page";
+  }, [t, language]);
 
   // Predefined analysis result
   const demoAnalysisResult = `從公共安全和台灣工地相關法規的角度來看，這張照片顯示的工地存在以下安全風險：
@@ -174,7 +181,7 @@ export default function Demo() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
       .then(() => {
-        alert('分析結果已複製到剪貼簿');
+        alert(t('resultCopied')); // Use translated alert
       })
       .catch(err => {
         console.error('無法複製到剪貼簿:', err);
@@ -187,10 +194,10 @@ export default function Demo() {
       <main className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-md p-6 max-w-6xl mx-auto">
           <div className="mb-6">
-            <h2 className="text-xl font-bold mb-4">示範功能</h2>
-            <p className="mb-4">這是一個示範頁面，展示多張照片上傳和分析功能。</p>
+            <h2 className="text-xl font-bold mb-4">{t('demoFeatureTitle')}</h2>
+            <p className="mb-4">{t('demoFeatureDescription')}</p>
             <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md mb-4">
-              <p>注意：這是示範頁面，使用的是模擬數據。查看實際的分析歷史記錄，請訪問 <Link href="/history" className="text-blue-600 hover:text-blue-800">歷史記錄頁面</Link>。</p>
+              <p>{t('demoNote')} <Link href="/history" className="text-blue-600 hover:text-blue-800">{t('history')}</Link>.</p>
             </div>
             <div className="flex space-x-4 mb-6">
               <button
@@ -200,7 +207,7 @@ export default function Demo() {
                   allLoading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
                 } transition-colors duration-200`}
               >
-                {allLoading ? '分析中...' : '一鍵分析所有照片'}
+                {allLoading ? t('analyzing') : t('analyzeAllPhotosDemo')}
               </button>
             </div>
           </div>
@@ -211,13 +218,13 @@ export default function Demo() {
               <thead>
                 <tr>
                   <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    檔案名稱
+                    {t('fileName')}
                   </th>
                   <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    照片
+                    {t('photo')}
                   </th>
                   <th className="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    分析結果
+                    {t('analysisResult')}
                   </th>
                 </tr>
               </thead>
@@ -231,7 +238,7 @@ export default function Demo() {
                       <div className="w-48 h-32 bg-gray-200 rounded-md overflow-hidden relative group">
                         <img
                           src={img.url}
-                          alt={`工地照片 ${index + 1}`}
+                          alt={`${t('sitePhotoAlt')} ${index + 1}`}
                           className="w-full h-full object-contain image-zoomable"
                           onClick={() => setLightboxImage(img.url)}
                         />
@@ -246,7 +253,7 @@ export default function Demo() {
                       {img.loading ? (
                         <div className="text-center py-4">
                           <div className="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
-                          <p className="mt-2 text-sm text-gray-500">分析中...</p>
+                          <p className="mt-2 text-sm text-gray-500">{t('analyzing')}</p>
                         </div>
                       ) : img.analysis ? (
                         <div className="relative">
@@ -258,7 +265,7 @@ export default function Demo() {
                           <button
                             onClick={() => copyToClipboard(img.analysis)}
                             className="absolute top-2 right-2 p-1 bg-white rounded-md shadow-sm hover:bg-gray-100"
-                            title="複製結果"
+                            title={t('copyResult')}
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -270,7 +277,7 @@ export default function Demo() {
                           onClick={() => analyzeImage(index)}
                           className="py-1 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md"
                         >
-                          分析此照片
+                          {t('analyzeThisPhotoDemo')}
                         </button>
                       )}
                     </td>
@@ -293,7 +300,7 @@ export default function Demo() {
                 <div className="w-full h-48 bg-gray-200 rounded-md overflow-hidden mb-4 relative group">
                   <img
                     src={img.url}
-                    alt={`工地照片 ${index + 1}`}
+                    alt={`${t('sitePhotoAlt')} ${index + 1}`}
                     className="w-full h-full object-contain image-zoomable"
                     onClick={() => setLightboxImage(img.url)}
                   />
@@ -306,11 +313,11 @@ export default function Demo() {
                 
                 {/* 分析結果 */}
                 <div className="mt-3">
-                  <h4 className="text-sm font-medium text-gray-500 mb-2">分析結果</h4>
+                  <h4 className="text-sm font-medium text-gray-500 mb-2">{t('analysisResult')}</h4>
                   {img.loading ? (
                     <div className="text-center py-4">
                       <div className="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
-                      <p className="mt-2 text-sm text-gray-500">分析中...</p>
+                      <p className="mt-2 text-sm text-gray-500">{t('analyzing')}</p>
                     </div>
                   ) : img.analysis ? (
                     <div className="relative">
@@ -322,7 +329,7 @@ export default function Demo() {
                       <button
                         onClick={() => copyToClipboard(img.analysis)}
                         className="absolute top-2 right-2 p-1 bg-white rounded-md shadow-sm hover:bg-gray-100"
-                        title="複製結果"
+                        title={t('copyResult')}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -334,7 +341,7 @@ export default function Demo() {
                       onClick={() => analyzeImage(index)}
                       className="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md"
                     >
-                      分析此照片
+                      {t('analyzeThisPhotoDemo')}
                     </button>
                   )}
                 </div>
