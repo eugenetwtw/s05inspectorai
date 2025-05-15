@@ -138,24 +138,19 @@ export async function DELETE(request: NextRequest) {
     
     console.log('Permanently deleting items:', ids);
     
-    // Process each ID individually to avoid errors
-    for (const id of ids) {
-      try {
-        // Convert id to number if it's a string
-        const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
-        
-        if (isNaN(numericId)) {
-          console.error(`Invalid ID format: ${id}`);
-          continue;
-        }
-        
-        // Permanently delete the analysis
-        await permanentlyDeleteAnalyses([numericId], userId);
-      } catch (idError) {
-        console.error(`Error processing ID ${id}:`, idError);
-        // Continue with other IDs even if one fails
-      }
+    // Convert all IDs to numbers
+    const numericIds = ids.map(id => typeof id === 'string' ? parseInt(id, 10) : id)
+                          .filter(id => !isNaN(id));
+    
+    if (numericIds.length === 0) {
+      return NextResponse.json({ 
+        error: '無效的請求參數',
+        details: 'No valid numeric IDs provided'
+      }, { status: 400 });
     }
+    
+    // Permanently delete all analyses at once
+    await permanentlyDeleteAnalyses(numericIds, userId);
     
     // Return success
     return NextResponse.json({ success: true });
