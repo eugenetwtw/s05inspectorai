@@ -93,24 +93,32 @@ export async function POST(request: NextRequest) {
     
     // If user is authenticated, save the analysis to the database
     if (userId) {
+      console.log('User is authenticated with ID:', userId);
       try {
         // We know userId is not null here because we're inside the if (userId) block
         const userIdString: string = userId!;
+        console.log('Processing analysis for authenticated user:', userIdString);
+        
         // Get the full user data from Clerk
         const user = await currentUser();
         const email = user?.emailAddresses?.[0]?.emailAddress || '';
+        console.log('User email from Clerk:', email || 'No email found');
         
         // Ensure user exists in our database
         if (email) {
+          console.log('Upserting user with email:', email);
           await upsertUser(userIdString, email);
+          console.log('User upserted successfully');
         } else {
-          console.error('No email found for user:', userIdString);
-          await upsertUser(userIdString, 'unknown@example.com'); // Fallback if email is not found
+          console.log('No email found for user, using fallback email');
+          await upsertUser(userIdString, `user_${userIdString}@example.com`); // Fallback if email is not found
+          console.log('User upserted with fallback email');
         }
         
-        // Upload image to Supabase Storage instead of local filesystem
+        // Upload image to Supabase Storage
         const timestamp = Date.now();
         const filename = `${userIdString}_${timestamp}.${imageFile.type.split('/')[1]}`;
+        console.log('Uploading image to Supabase Storage with filename:', filename);
         
         // Upload to Supabase Storage
         const { data: uploadData, error: uploadError } = await sql.storage
@@ -122,8 +130,10 @@ export async function POST(request: NextRequest) {
         
         if (uploadError) {
           console.error('Error uploading image to Supabase Storage:', uploadError);
-          throw new Error('無法上傳圖片到儲存空間');
+          throw new Error(`無法上傳圖片到儲存空間: ${uploadError.message}`);
         }
+        
+        console.log('Image uploaded successfully to path:', uploadData.path);
         
         // Get public URL for the uploaded file
         const { data: publicUrlData } = sql.storage
@@ -132,6 +142,8 @@ export async function POST(request: NextRequest) {
         
         // Save analysis to database with Supabase Storage URL
         const imageUrl = publicUrlData.publicUrl;
+        console.log('Generated public URL for image:', imageUrl);
+        
         const metadata = {
           originalFilename: imageFile.name,
           mimeType: imageFile.type,
@@ -140,26 +152,43 @@ export async function POST(request: NextRequest) {
           storagePath: uploadData.path
         };
         
+        console.log('Prepared metadata for analysis:', metadata);
         console.log('Attempting to save analysis to database with image URL:', imageUrl, 'and batch number:', batchNo);
+        
         try {
-          await saveAnalysisHistory(userIdString, imageUrl, analysisText, metadata, batchNo);
+          const savedAnalysis = await saveAnalysisHistory(userIdString, imageUrl, analysisText, metadata, batchNo);
           saved = true;
-          console.log('Analysis successfully saved to database with image URL:', imageUrl, 'and batch number:', batchNo);
+          console.log('Analysis successfully saved to database with ID:', savedAnalysis?.id);
         } catch (saveError) {
           console.error('Error saving analysis to database:', saveError);
+          // Instead of silently failing, return the error to the client
+          return NextResponse.json({
+            analysis: analysisText,
+            saved: false,
+            error: 'Failed to save analysis to database',
+            details: saveError.message
+          }, { status: 500 });
         }
       } catch (dbError) {
-        console.error('Error saving to database:', dbError);
-        // Continue even if database save fails
+        console.error('Error in database operations:', dbError);
+        // Return the error to the client
+        return NextResponse.json({
+          analysis: analysisText,
+          saved: false,
+          error: 'Database operation failed',
+          details: dbError.message
+        }, { status: 500 });
       }
     } else {
+      console.log('User is not authenticated, skipping database save');
       // For unauthenticated users, we can still upload to Supabase Storage but won't save to DB
       try {
         const timestamp = Date.now();
         const filename = `temp_${timestamp}.${imageFile.type.split('/')[1]}`;
+        console.log('Uploading temporary image to Supabase Storage with filename:', filename);
         
         // Upload to Supabase Storage
-        const { error: uploadError } = await sql.storage
+        const { data: uploadData, error: uploadError } = await sql.storage
           .from('analysis-images')
           .upload(filename, imageFile, {
             cacheControl: '3600',
@@ -169,10 +198,10 @@ export async function POST(request: NextRequest) {
         if (uploadError) {
           console.error('Error uploading temporary image to Supabase Storage:', uploadError);
         } else {
-          console.log('Image saved to Supabase Storage (temporary)');
+          console.log('Temporary image saved to Supabase Storage at path:', uploadData.path);
         }
       } catch (saveError) {
-        console.error('Error saving image to Supabase Storage:', saveError);
+        console.error('Error saving temporary image to Supabase Storage:', saveError);
         // Continue even if image save fails
       }
     }

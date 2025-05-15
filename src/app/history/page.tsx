@@ -8,6 +8,7 @@ export default function History() {
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -15,11 +16,19 @@ export default function History() {
     const fetchHistory = async () => {
       try {
         setLoading(true);
+        setIsUnauthorized(false);
         const offset = (page - 1) * limit;
         const response = await fetch(`/api/history?limit=${limit}&offset=${offset}`);
+        
+        if (response.status === 401) {
+          setIsUnauthorized(true);
+          return;
+        }
+        
         if (!response.ok) {
           throw new Error('無法獲取歷史記錄');
         }
+        
         const data = await response.json();
         setHistory(data.history || []);
       } catch (err) {
@@ -68,7 +77,18 @@ export default function History() {
           <h2 className="text-2xl font-bold mb-4">分析歷史記錄</h2>
           {loading && <p className="text-gray-500">載入中...</p>}
           {error && <p className="text-red-500">錯誤: {error}</p>}
-          {!loading && !error && history.length === 0 && (
+          {isUnauthorized && (
+            <div className="p-4 bg-yellow-100 text-yellow-800 rounded-md mb-4">
+              <p className="mb-2">您需要登入才能查看歷史記錄。</p>
+              <button
+                onClick={() => window.location.href = '/'}
+                className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+              >
+                返回首頁登入
+              </button>
+            </div>
+          )}
+          {!loading && !error && !isUnauthorized && history.length === 0 && (
             <p className="text-gray-500">沒有找到歷史記錄。</p>
           )}
           {!loading && !error && history.length > 0 && (

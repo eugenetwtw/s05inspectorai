@@ -10,8 +10,11 @@ export async function GET(
   const authData = await auth();
   const userId = authData.userId;
   
+  console.log('Fetching analysis by ID:', params.id, 'for user:', userId);
+  
   // Check if user is authenticated
   if (!userId) {
+    console.error('Unauthorized access attempt to analysis ID:', params.id);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -20,22 +23,28 @@ export async function GET(
     const id = params.id;
     
     if (!id) {
+      console.error('No analysis ID provided in request');
       return NextResponse.json({ error: '未提供分析ID' }, { status: 400 });
     }
     
     // Check if we should include deleted items
     const searchParams = request.nextUrl.searchParams;
     const includeDeleted = searchParams.get('includeDeleted') === 'true';
+    console.log('Include deleted items:', includeDeleted);
     
     // Get the analysis
+    console.log('Calling getAnalysisById with params:', { id, userId, includeDeleted });
     const analysis = await getAnalysisById(id, userId, includeDeleted);
     
     if (!analysis) {
+      console.error('Analysis record not found for ID:', id, 'and user:', userId);
       return NextResponse.json({ error: '找不到分析記錄' }, { status: 404 });
     }
     
-    // Return the analysis
-    return NextResponse.json({ analysis });
+    console.log('Analysis record found:', analysis.id);
+    
+    // Return the analysis as 'record' to match frontend expectations
+    return NextResponse.json({ record: analysis });
   } catch (error) {
     console.error('Error fetching analysis:', error);
     return NextResponse.json({

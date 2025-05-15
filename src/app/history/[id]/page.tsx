@@ -12,17 +12,26 @@ export default function HistoryDetail() {
   const [record, setRecord] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
 
   useEffect(() => {
     const fetchRecord = async () => {
       try {
         setLoading(true);
+        setIsUnauthorized(false);
         const response = await fetch(`/api/analysis/${id}`);
+        
+        if (response.status === 401) {
+          setIsUnauthorized(true);
+          return;
+        }
+        
         if (!response.ok) {
           throw new Error('無法獲取記錄詳細信息');
         }
+        
         const data = await response.json();
-        setRecord(data.analysis || null);
+        setRecord(data.record || null);
       } catch (err) {
         setError(err instanceof Error ? err.message : '無法獲取記錄詳細信息');
       } finally {
@@ -54,7 +63,18 @@ export default function HistoryDetail() {
           <h2 className="text-2xl font-bold mb-4">分析記錄詳細信息</h2>
           {loading && <p className="text-gray-500">載入中...</p>}
           {error && <p className="text-red-500">錯誤: {error}</p>}
-          {!loading && !error && !record && (
+          {isUnauthorized && (
+            <div className="p-4 bg-yellow-100 text-yellow-800 rounded-md mb-4">
+              <p className="mb-2">您需要登入才能查看記錄詳細信息。</p>
+              <button
+                onClick={() => window.location.href = '/'}
+                className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+              >
+                返回首頁登入
+              </button>
+            </div>
+          )}
+          {!loading && !error && !isUnauthorized && !record && (
             <p className="text-gray-500">找不到該記錄。</p>
           )}
           {!loading && !error && record && (
