@@ -5,6 +5,7 @@ import { ClerkProvider, SignedIn, SignedOut, UserButton, SignInButton } from "@c
 import { Toaster } from "react-hot-toast";
 import "../styles/globals.css";
 import { LanguageProvider, useLanguage } from "../lib/i18n/LanguageContext";
+import { Suspense } from "react";
 import LanguageSelector from "../components/LanguageSelector";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
@@ -67,11 +68,13 @@ export default function RootLayout({
       <html lang="zh-TW">
         <body>
           <LanguageProvider>
-            <AppHeader />
-            <main>
-              {children}
-            </main>
-            <AppFooter />
+            <Suspense fallback={null}>
+              <AppHeader />
+              <main>
+                {children}
+              </main>
+              <AppFooter />
+            </Suspense>
           </LanguageProvider>
           <Toaster position="top-center" />
         </body>
