@@ -202,7 +202,9 @@ export default function Demo() {
           <div className="mb-6">
             <h2 className="text-xl font-bold mb-4">示範功能</h2>
             <p className="mb-4">這是一個示範頁面，展示多張照片上傳和分析功能。</p>
-            
+            <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md mb-4">
+              <p>注意：這是示範頁面，使用的是模擬數據。查看實際的分析歷史記錄，請訪問 <Link href="/history" className="text-blue-600 hover:text-blue-800">歷史記錄頁面</Link>。</p>
+            </div>
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={analyzeAllImages}

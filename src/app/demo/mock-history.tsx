@@ -305,6 +305,9 @@ export default function MockHistory() {
               </div>
             )}
           </div>
+          <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md mb-6">
+            <p>注意：這是示範頁面，使用的是模擬數據。查看實際的分析歷史記錄，請訪問 <Link href="/history" className="text-blue-600 hover:text-blue-800">歷史記錄頁面</Link>。</p>
+          </div>
 
           {loading ? (
             <div className="text-center py-8">

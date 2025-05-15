@@ -169,6 +169,9 @@ export default function Home() {
             </Link>
             <SignedIn>
               <div className="flex items-center gap-4">
+                <Link href="/history" className="text-blue-600 hover:text-blue-800">
+                  歷史記錄
+                </Link>
                 <UserButton />
               </div>
             </SignedIn>
