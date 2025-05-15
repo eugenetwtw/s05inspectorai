@@ -16,18 +16,20 @@ type DemoImageItem = {
   loading: boolean;
 };
 
+import { TranslationKeys } from '../../lib/i18n/translations'; // Import TranslationKeys
+
 export default function Demo() {
   const [images, setImages] = useState<DemoImageItem[]>([
     {
       id: 1,
-      name: "工地支撐柱.jpg",
+      name: "demoImage1Name", // Placeholder key
       url: "/60254.jpg",
       analysis: "",
       loading: false
     },
     {
       id: 2,
-      name: "施工現場.jpg",
+      name: "demoImage2Name", // Placeholder key
       url: "/60253.jpg",
       analysis: "",
       loading: false
@@ -39,94 +41,18 @@ export default function Demo() {
   const { t, language } = useLanguage(); // Initialize useLanguage
 
   useEffect(() => {
-    // Optionally update document title if this page should have a translated title
     document.title = t('demoPageTitle') || "Demo Page";
+    // Update image names based on current language
+    setImages(prevImages => prevImages.map(img => {
+      const imageNameKey = `demoImage${img.id}Name` as keyof TranslationKeys;
+      return {
+        ...img,
+        name: t(imageNameKey) || `demoImage${img.id}Name`, // Fallback to key
+      };
+    }));
   }, [t, language]);
 
-  // Predefined analysis result
-  const demoAnalysisResult = `從公共安全和台灣工地相關法規的角度來看，這張照片顯示的工地存在以下安全風險：
-
-1. **高處作業風險**：  
-   照片顯示一個深坑，沒有明顯的護欄或安全圍欄。根據台灣《職業安全衛生法》和《營造安全衛生設施標準》，高處作業（高度超過2公尺）必須設置護欄、蓋板或安全網，避免人員墜落。
-
-2. **地面雜物與絆倒風險**：  
-   坑底有木板、垃圾和其他雜物，容易造成工人絆倒或滑倒。《營造安全衛生設施標準》第4條規定，工地應保持整潔，避免散落物導致意外。
-
-3. **結構穩定性問題**：  
-   混凝土牆上有突出的鋼筋，沒有妥善處理，可能刺傷工人或因結構不穩導致崩塌風險。根據法規，鋼筋端部應彎折或加裝保護蓋。
-
-4. **照明不足**：  
-   照片中光線昏暗，照明明顯不足。《營造安全衛生設施標準》第19條要求工地必須提供充足照明，確保工人能清楚辨識環境，避免意外。
-
-5. **缺乏安全警示**：  
-   沒有看到警示標誌或告示牌，提醒工人注意深坑危險。法規要求危險區域必須設置明顯的警示標誌。
-
-**建議改善措施**：  
-- 設置護欄或安全網，避免墜落。  
-- 清理地面雜物，保持工作區域整潔。  
-- 處理突出鋼筋，確保結構安全。  
-- 提供充足照明，確保工作環境安全。  
-- 設置警示標誌，提醒工人注意危險。
-
-這些問題若不改善，可能違反台灣的職業安全法規，並增加工地意外的風險。`;
-
-  // Second demo analysis for additional images
-  const secondDemoAnalysisResult = `從公共安全和台灣工地相關法規的角度來看，這張照片顯示的工地存在以下安全風險：
-
-1. **高處作業風險**：  
-   照片顯示一個深坑，沒有明顯的護欄或安全圍欄。根據台灣《職業安全衛生法》和《營造安全衛生設施標準》，高處作業（高度超過2公尺）必須設置護欄、蓋板或安全網，避免人員墜落。
-
-2. **地面雜物與絆倒風險**：  
-   坑底有木板、垃圾和其他雜物，容易造成工人絆倒或滑倒。《營造安全衛生設施標準》第4條規定，工地應保持整潔，避免散落物導致意外。
-
-3. **結構穩定性問題**：  
-   混凝土牆上有突出的鋼筋，沒有妥善處理，可能刺傷工人或因結構不穩導致崩塌風險。根據法規，鋼筋端部應彎折或加裝保護蓋。
-
-4. **照明不足**：  
-   照片中光線昏暗，照明明顯不足。《營造安全衛生設施標準》第19條要求工地必須提供充足照明，確保工人能清楚辨識環境，避免意外。
-
-5. **缺乏安全警示**：  
-   沒有看到警示標誌或告示牌，提醒工人注意深坑危險。法規要求危險區域必須設置明顯的警示標誌。
-
-**建議改善措施**：  
-- 設置護欄或安全網，避免墜落。  
-- 清理地面雜物，保持工作區域整潔。  
-- 處理突出鋼筋，確保結構安全。  
-- 提供充足照明，確保工作環境安全。  
-- 設置警示標誌，提醒工人注意危險。
-
-這些問題若不改善，可能違反台灣的職業安全法規，並增加工地意外的風險。`;
-
-  // Third demo analysis
-  const thirdDemoAnalysisResult = `1. 照片概述：
-照片顯示一處建築工地的混凝土澆築工作，可見新澆築的混凝土表面和周圍的施工環境。工人正在進行表面處理作業。
-
-2. 安全問題分析：
-- 工作區域缺乏明確的安全警示標識
-- 部分工人未佩戴安全帽或其他必要的防護裝備
-- 電線和工具散亂放置，存在絆倒和觸電風險
-- 工作平台邊緣缺乏防護欄杆，存在墜落風險
-
-3. 衛生問題分析：
-- 工地周圍有建築廢料和垃圾未及時清理
-- 水泥和混凝土灰塵飛揚，可能影響工人健康和周圍環境
-- 未見適當的洗手和清潔設施
-- 工具和設備未妥善存放，可能導致污染擴散
-
-4. 施工品質分析：
-- 混凝土表面處理不均勻，存在凹凸不平現象
-- 部分區域有蜂窩麻面現象，可能是振搗不充分導致
-- 混凝土與模板接縫處理不當，存在漏漿現象
-- 養護措施不足，可能影響混凝土強度發展
-
-5. 建議改善措施：
-- 加強工地安全管理，確保所有工人佩戴適當的個人防護裝備
-- 設置明確的安全警示標識和防護欄杆
-- 改進混凝土澆築和振搗工藝，確保密實度
-- 加強混凝土養護工作，避免過早失水和開裂
-- 建立工地清潔制度，及時清理廢料和垃圾
-- 對施工人員進行專業技能培訓，提高施工質量意識
-- 實施定期質量檢查和驗收制度，確保符合設計要求`;
+  // Hardcoded analysis results are removed. They will be fetched using t() function.
 
   const analyzeImage = (index: number) => {
     // Set loading state
@@ -140,14 +66,20 @@ export default function Demo() {
     setTimeout(() => {
       setImages(prev => {
         const updated = [...prev];
-        // Choose different analysis results based on index
-        let result = demoAnalysisResult;
-        if (index === 1) result = secondDemoAnalysisResult;
-        if (index === 2) result = thirdDemoAnalysisResult;
+        let analysisKey: keyof TranslationKeys;
+        // Determine which analysis text to use based on the image's original ID or index
+        if (updated[index].id === 1) {
+          analysisKey = 'demoAnalysis1';
+        } else if (updated[index].id === 2) {
+          analysisKey = 'demoAnalysis2';
+        } else {
+          // Fallback or handle more images if necessary
+          analysisKey = 'demoAnalysis3'; // Assuming a third analysis for any other image
+        }
         
         updated[index] = { 
           ...updated[index], 
-          analysis: result,
+          analysis: t(analysisKey),
           loading: false 
         };
         return updated;
@@ -161,15 +93,19 @@ export default function Demo() {
     // Simulate analyzing all images with a delay
     setTimeout(() => {
       setImages(prev => {
-        return prev.map((img, index) => {
-          // Choose different analysis results based on index
-          let result = demoAnalysisResult;
-          if (index === 1) result = secondDemoAnalysisResult;
-          if (index === 2) result = thirdDemoAnalysisResult;
+        return prev.map((img) => { // Iterate through images, index is not directly used for key here
+          let analysisKey: keyof TranslationKeys;
+          if (img.id === 1) {
+            analysisKey = 'demoAnalysis1';
+          } else if (img.id === 2) {
+            analysisKey = 'demoAnalysis2';
+          } else {
+            analysisKey = 'demoAnalysis3'; // Fallback
+          }
           
           return {
             ...img,
-            analysis: result,
+            analysis: t(analysisKey),
             loading: false
           };
         });
