@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { format } from 'date-fns';
 
 export default function History() {
@@ -95,15 +96,28 @@ export default function History() {
             <div className="space-y-4">
               {history.map((item) => (
                 <div key={item.id} className="border rounded-md p-4 flex justify-between items-start">
-                  <div>
+                  <div className="flex gap-4">
+                    {item.image_url && (
+                      <div className="relative w-16 h-16 flex-shrink-0">
+                        <Image
+                          src={item.image_url}
+                          alt="分析圖片"
+                          fill
+                          sizes="64px"
+                          className="rounded-md object-cover"
+                        />
+                      </div>
+                    )}
+                    <div>
                     <p className="font-medium">
                       分析日期: {format(new Date(item.created_at), 'yyyy/MM/dd HH:mm')}
                     </p>
                     {item.batch_no && <p className="text-sm text-gray-600">批次編號: {item.batch_no}</p>}
                     <p className="text-sm text-gray-600 line-clamp-2">{item.analysis_text}</p>
-                    <Link href={`/history/${item.id}`} className="text-blue-600 hover:text-blue-800 text-sm">
-                      查看詳細內容
-                    </Link>
+                      <Link href={`/history/${item.id}`} className="text-blue-600 hover:text-blue-800 text-sm">
+                        查看詳細內容
+                      </Link>
+                    </div>
                   </div>
                   <button
                     onClick={() => handleDelete(item.id)}
