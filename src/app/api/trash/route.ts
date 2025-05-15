@@ -5,7 +5,7 @@ import {
   restoreAnalysesFromTrash, 
   permanentlyDeleteAnalyses,
   cleanupOldTrashItems
-} from '../../../lib/db';
+} from '../../../lib';
 
 // Get trash items
 export async function GET(request: NextRequest) {
