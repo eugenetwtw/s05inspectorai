@@ -7,9 +7,25 @@ const nextConfig = {
   },
   // Set page extensions to only include App Router files
   pageExtensions: ['tsx', 'ts'],
-  // Add Blob storage domain to image domains
+  // Add Supabase Storage and Blob storage domains to image domains
   images: {
-    domains: ['yxzgfzz1qmz8m8cf.public.blob.vercel-storage.com'],
+    domains: [
+      'yxzgfzz1qmz8m8cf.public.blob.vercel-storage.com',
+      'supabase.co',
+      'supabase.in'
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.in',
+        pathname: '/storage/v1/object/public/**',
+      }
+    ]
   },
   // App Router is enabled by default in Next.js 13.4+
   // experimental: {
