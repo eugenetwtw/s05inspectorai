@@ -2,20 +2,22 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-// Export Clerk's middleware directly
-export default clerkMiddleware();
+// 合併 Clerk 與 i18n middleware
+export default async function middleware(request: NextRequest) {
+  // 先執行 Clerk middleware
+  const clerkResponse = await clerkMiddleware()(request, undefined);
+  if (clerkResponse) {
+    // Clerk middleware 可能會回傳 redirect/response
+    return clerkResponse;
+  }
 
-// Create a separate middleware function for language detection
-export function middleware(request: NextRequest) {
-  // Check if the URL already has a language parameter
+  // i18n 語言偵測與 redirect（不處理 /api 路徑）
   const url = request.nextUrl.clone();
   const hasLangParam = url.searchParams.has('lang');
-  
-  // If the URL doesn't have a language parameter, add it based on the Accept-Language header
   if (!hasLangParam && !request.nextUrl.pathname.startsWith('/api')) {
     const acceptLanguage = request.headers.get('accept-language') || '';
-    let detectedLang = 'zh-TW'; // Default language
-    
+    let detectedLang = 'zh-TW'; // 預設語言
+
     if (acceptLanguage.includes('en')) {
       detectedLang = 'en';
     } else if (acceptLanguage.includes('zh')) {
@@ -25,15 +27,12 @@ export function middleware(request: NextRequest) {
         detectedLang = 'zh-CN';
       }
     }
-    
-    // Add the detected language as a query parameter
+
     url.searchParams.set('lang', detectedLang);
-    
-    // Return the response with the modified URL
     return NextResponse.redirect(url);
   }
-  
-  // If the URL already has a language parameter or it's an API route, continue with normal flow
+
+  // 沒有攔截則繼續
   return NextResponse.next();
 }
 
