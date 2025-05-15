@@ -3,7 +3,8 @@ import { auth } from '@clerk/nextjs/server';
 import { 
   getUserAnalysisHistory, 
   restoreAnalysesFromTrash, 
-  permanentlyDeleteAnalyses,
+  executePermanentDeletion, // Use the new function
+  // permanentlyDeleteAnalyses, // Comment out or remove old one
   cleanupOldTrashItems
 } from '../../../lib/db';
 
@@ -150,7 +151,7 @@ export async function DELETE(request: NextRequest) {
     }
     
     // Permanently delete all analyses at once
-    await permanentlyDeleteAnalyses(numericIds, userId);
+    await executePermanentDeletion(numericIds, userId); // Call the new function
     
     // Return success
     return NextResponse.json({ success: true });

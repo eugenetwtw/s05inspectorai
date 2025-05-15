@@ -251,7 +251,60 @@ async function permanentlyDeleteAnalyses(
     
     return true;
   } catch (error) {
-    console.error(`Error in permanentlyDeleteAnalyses for user ${userId}, IDs [${ids.join(', ')}]:`, error);
+  console.error(`Error in permanentlyDeleteAnalyses for user ${userId}, IDs [${ids.join(', ')}]:`, error);
+  throw error;
+  }
+}
+
+// New function with the same logic but different name
+async function executePermanentDeletion(
+  ids: number[], 
+  userId: string
+): Promise<boolean> {
+  console.log(`Attempting to executePermanentDeletion for items with IDs: [${ids.join(', ')}] for user: ${userId}`);
+  try {
+    const itemsToDelete = await sqlClient`
+      SELECT id, image_url FROM analysis_history
+      WHERE id = ANY(${ids}) AND user_id = ${userId}
+    `;
+
+    if (itemsToDelete.length === 0) {
+      console.log(`No items found matching IDs [${ids.join(', ')}] for user ${userId} via executePermanentDeletion.`);
+      return true; 
+    }
+
+    console.log(`Found ${itemsToDelete.length} items for executePermanentDeletion for user ${userId}.`);
+
+    let blobDeletionAttempts = 0;
+    let blobDeletionSuccesses = 0;
+    for (const item of itemsToDelete) {
+      try {
+        if (item.image_url) {
+          blobDeletionAttempts++;
+          await del(item.image_url);
+          console.log(`executePermanentDeletion: Successfully deleted blob: ${item.image_url} for item ID ${item.id}`);
+          blobDeletionSuccesses++;
+        }
+      } catch (blobError) {
+        console.error(`executePermanentDeletion: Error deleting blob: ${item.image_url} for item ID ${item.id}:`, blobError);
+      }
+    }
+    console.log(`executePermanentDeletion: Blob deletion: ${blobDeletionSuccesses}/${blobDeletionAttempts} successful for user ${userId}.`);
+
+    const actualIdsToDelete = itemsToDelete.map(item => item.id);
+    if (actualIdsToDelete.length > 0) {
+      await sqlClient`
+        DELETE FROM analysis_history
+        WHERE id = ANY(${actualIdsToDelete}) AND user_id = ${userId}
+      `;
+      console.log(`executePermanentDeletion: Successfully deleted ${actualIdsToDelete.length} records from database for user ${userId}.`);
+    } else {
+      console.log(`executePermanentDeletion: No database records to delete for user ${userId} after blob processing.`);
+    }
+    
+    return true;
+  } catch (error) {
+    console.error(`Error in executePermanentDeletion for user ${userId}, IDs [${ids.join(', ')}]:`, error);
     throw error;
   }
 }
@@ -312,7 +365,8 @@ export {
   getAnalysisById,
   moveAnalysesToTrash,
   restoreAnalysesFromTrash,
-  permanentlyDeleteAnalyses,
+  permanentlyDeleteAnalyses, // Keep old one for now
+  executePermanentDeletion,  // Add new one
   cleanupOldTrashItems,
   sqlClient as sql // Export sqlClient as sql for compatibility
 };
