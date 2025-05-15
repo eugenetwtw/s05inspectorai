@@ -204,16 +204,7 @@ export async function permanentlyDeleteAnalyses(
       WHERE id = ANY(${ids}) AND user_id = ${userId}
     `;
 
-    // Process each ID individually to avoid array conversion issues
-    for (const id of ids) {
-      // Delete the database record
-      await sql`
-        DELETE FROM analysis_history
-        WHERE id = ${id} AND user_id = ${userId}
-      `;
-    }
-
-    // Delete all blob files
+    // Delete all blob files first
     for (const item of itemsToDelete) {
       try {
         if (item.image_url) {
@@ -225,6 +216,12 @@ export async function permanentlyDeleteAnalyses(
         // Continue even if blob deletion fails
       }
     }
+
+    // Then delete the database records (bypassing any retention checks)
+    await sql`
+      DELETE FROM analysis_history
+      WHERE id = ANY(${ids}) AND user_id = ${userId}
+    `;
     
     return true;
   } catch (error) {
