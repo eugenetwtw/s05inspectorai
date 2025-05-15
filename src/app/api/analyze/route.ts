@@ -62,27 +62,39 @@ export async function POST(request: NextRequest) {
 
     // Call OpenAI API with the image
     console.log('Calling OpenAI API with image...');
+    console.log('Using model: gpt-4o');
+    console.log('Image type:', imageFile.type);
+    console.log('Image size:', imageFile.size, 'bytes');
     
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: prompt },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:image/${imageFile.type.split('/')[1]};base64,${base64Image}`,
+    let response;
+    try {
+      response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: prompt },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: `data:image/${imageFile.type.split('/')[1]};base64,${base64Image}`,
+                },
               },
-            },
-          ],
-        },
-      ],
-      max_tokens: 1000,
-    });
-
-    console.log('OpenAI API response received');
+            ],
+          },
+        ],
+        max_tokens: 1000,
+      });
+      console.log('OpenAI API response received successfully');
+    } catch (openaiError) {
+      console.error('Error calling OpenAI API:', openaiError);
+      console.error('OpenAI Error details:', JSON.stringify(openaiError, null, 2));
+      return NextResponse.json({
+        error: '呼叫 OpenAI API 時發生錯誤',
+        details: openaiError.message || '未知錯誤',
+      }, { status: 500 });
+    }
     
     const analysisText = response.choices[0].message.content;
     
