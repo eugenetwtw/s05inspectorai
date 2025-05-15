@@ -16,6 +16,7 @@ export interface AnalysisHistory {
   deleted: boolean;
   deleted_at: string | null;
   metadata: any;
+  batch_no: string;
 }
 
 // Initialize the Supabase client with the connection details
@@ -57,12 +58,13 @@ async function saveAnalysisHistory(
   userId: string, 
   imageUrl: string, 
   analysisText: string, 
-  metadata: any = {}
+  metadata: any = {},
+  batchNo: string = ''
 ): Promise<any> {
   try {
     const { data, error } = await supabase
       .from('analysis_history')
-      .insert({ user_id: userId, image_url: imageUrl, analysis_text: analysisText, metadata: metadata })
+      .insert({ user_id: userId, image_url: imageUrl, analysis_text: analysisText, metadata: metadata, batch_no: batchNo })
       .select();
     
     if (error) throw error;

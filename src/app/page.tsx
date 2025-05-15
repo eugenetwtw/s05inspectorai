@@ -10,6 +10,7 @@ import {
   SignInButton
 } from '@clerk/nextjs';
 import ImageLightbox from '../components/ImageLightbox';
+import ReactMarkdown from 'react-markdown';
 
 type ImageItem = {
   file: File;
@@ -23,6 +24,7 @@ export default function Home() {
   const [allLoading, setAllLoading] = useState(false);
   const [error, setError] = useState('');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [batchNo, setBatchNo] = useState<string>('');
   const { isSignedIn, user } = useUser();
 
   // Automatically sync user data to Supabase upon login
@@ -57,6 +59,7 @@ export default function Home() {
     const files = e.target.files;
     if (files && files.length > 0) {
       const newImages: ImageItem[] = [];
+      const newBatchNo = Date.now().toString(); // Use timestamp as batch number
       
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -69,7 +72,9 @@ export default function Home() {
       }
       
       setImages(newImages);
+      setBatchNo(newBatchNo);
       setError('');
+      console.log('New batch number set:', newBatchNo);
     }
   };
 
@@ -85,7 +90,9 @@ export default function Home() {
     try {
       const formData = new FormData();
       formData.append('image', images[index].file);
+      formData.append('batchNo', batchNo);
 
+      console.log('Sending analysis request with batch number:', batchNo);
       const response = await fetch('/api/analyze', {
         method: 'POST',
         body: formData,
@@ -252,8 +259,8 @@ export default function Home() {
                             </div>
                           ) : img.analysis ? (
                             <div className="relative">
-                              <div className="p-3 bg-gray-50 rounded-md border border-gray-200 whitespace-pre-wrap max-h-64 overflow-y-auto text-sm">
-                                {img.analysis}
+                              <div className="p-3 bg-gray-50 rounded-md border border-gray-200 max-h-64 overflow-y-auto text-sm">
+                                <ReactMarkdown>{img.analysis}</ReactMarkdown>
                               </div>
                               <button
                                 onClick={() => copyToClipboard(img.analysis)}

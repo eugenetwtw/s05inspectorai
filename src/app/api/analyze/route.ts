@@ -9,14 +9,17 @@ const openai = new OpenAI({
 });
 
 export async function POST(request: NextRequest) {
-  try {
-    // Parse the form data
-    const formData = await request.formData();
-    const imageFile = formData.get('image') as File;
+    try {
+      // Parse the form data
+      const formData = await request.formData();
+      const imageFile = formData.get('image') as File;
+      const batchNo = formData.get('batchNo') as string || '';
 
-    if (!imageFile) {
-      return NextResponse.json({ error: '未提供照片' }, { status: 400 });
-    }
+      if (!imageFile) {
+        return NextResponse.json({ error: '未提供照片' }, { status: 400 });
+      }
+      
+      console.log('Received batch number for analysis:', batchNo);
 
     // Convert the file to a buffer
     const bytes = await imageFile.arrayBuffer();
@@ -137,10 +140,14 @@ export async function POST(request: NextRequest) {
           storagePath: uploadData.path
         };
         
-        await saveAnalysisHistory(userIdString, imageUrl, analysisText, metadata);
-        saved = true;
-        
-        console.log('Analysis saved to database with Blob URL:', imageUrl);
+        console.log('Attempting to save analysis to database with image URL:', imageUrl, 'and batch number:', batchNo);
+        try {
+          await saveAnalysisHistory(userIdString, imageUrl, analysisText, metadata, batchNo);
+          saved = true;
+          console.log('Analysis successfully saved to database with image URL:', imageUrl, 'and batch number:', batchNo);
+        } catch (saveError) {
+          console.error('Error saving analysis to database:', saveError);
+        }
       } catch (dbError) {
         console.error('Error saving to database:', dbError);
         // Continue even if database save fails
