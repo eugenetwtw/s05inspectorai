@@ -8,26 +8,9 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function POST(request: NextRequest) {
-    try {
-      // Parse the form data
-      const formData = await request.formData();
-      const imageFile = formData.get('image') as File;
-      const batchNo = formData.get('batchNo') as string || '';
-
-      if (!imageFile) {
-        return NextResponse.json({ error: '未提供照片' }, { status: 400 });
-      }
-      
-      console.log('Received batch number for analysis:', batchNo);
-
-    // Convert the file to a buffer
-    const bytes = await imageFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const base64Image = buffer.toString('base64');
-
-    // Create a prompt for the vision model
-    const prompt = `
+// Define prompts for different languages
+const prompts = {
+  'zh-TW': `
 你是一位專業的工地安全與品質檢查專家。請仔細分析這張工地照片，並檢查以下方面的問題：
 
 1. 安全問題：
@@ -58,13 +41,112 @@ export async function POST(request: NextRequest) {
 5. 建議改善措施：（針對發現的問題提出具體改善建議）
 
 請使用繁體中文回答。
-`;
+`,
+  'zh-CN': `
+你是一位专业的工地安全与品质检查专家。请仔细分析这张工地照片，并检查以下方面的问题：
+
+1. 安全问题：
+   - 工人是否正确使用个人防护装备（如安全帽、安全带、护目镜等）
+   - 是否有坠落危险
+   - 电气安全问题
+   - 机械操作安全问题
+   - 其他可能的安全隐患
+
+2. 卫生问题：
+   - 工地环境是否整洁
+   - 废弃物处理是否适当
+   - 是否有污染或有害物质暴露问题
+
+3. 施工品质问题：
+   - 是否有明显的施工瑕疵
+   - 材料使用是否适当
+   - 施工技术是否符合标准
+   - 是否有施工错误
+
+请提供详细的分析，并针对发现的问题提出改善建议。如果照片中没有明显问题，也请说明。
+
+回复格式：
+1. 照片概述：（简要描述照片内容）
+2. 安全问题分析：（列出发现的安全问题）
+3. 卫生问题分析：（列出发现的卫生问题）
+4. 施工品质分析：（列出发现的施工品质问题）
+5. 建议改善措施：（针对发现的问题提出具体改善建议）
+
+请使用简体中文回答。
+`,
+  'en': `
+You are a professional construction site safety and quality inspection expert. Please carefully analyze this construction site photo and check for issues in the following aspects:
+
+1. Safety Issues:
+   - Are workers correctly using personal protective equipment (such as helmets, safety belts, goggles, etc.)
+   - Is there a risk of falling
+   - Electrical safety issues
+   - Mechanical operation safety issues
+   - Other potential safety hazards
+
+2. Hygiene Issues:
+   - Is the construction site environment clean
+   - Is waste disposal appropriate
+   - Are there pollution or hazardous substance exposure issues
+
+3. Construction Quality Issues:
+   - Are there obvious construction defects
+   - Is material use appropriate
+   - Does the construction technique meet standards
+   - Are there construction errors
+
+Please provide a detailed analysis and suggest improvements for the issues found. If there are no obvious issues in the photo, please state so.
+
+Response format:
+1. Photo Overview: (Brief description of the photo content)
+2. Safety Issue Analysis: (List the safety issues found)
+3. Hygiene Issue Analysis: (List the hygiene issues found)
+4. Construction Quality Analysis: (List the construction quality issues found)
+5. Suggested Improvement Measures: (Provide specific improvement suggestions for the issues found)
+
+Please answer in English.
+`
+};
+
+// Error messages for different languages
+const errorMessages = {
+  'zh-TW': { noImage: '未提供照片', analyzeError: '分析照片時發生錯誤' },
+  'zh-CN': { noImage: '未提供照片', analyzeError: '分析照片时发生错误' },
+  'en': { noImage: 'No photo provided', analyzeError: 'Error analyzing photo' }
+};
+
+export async function POST(request: NextRequest) {
+    try {
+      // Parse the form data
+      const formData = await request.formData();
+      const imageFile = formData.get('image') as File;
+      const batchNo = formData.get('batchNo') as string || '';
+      const lang = formData.get('lang') as string || 'zh-TW'; // Default to Traditional Chinese
+      
+      // Validate language and set to default if invalid
+      const validLang = ['zh-TW', 'zh-CN', 'en'].includes(lang) ? lang : 'zh-TW';
+      
+      if (!imageFile) {
+        return NextResponse.json({ error: errorMessages[validLang].noImage }, { status: 400 });
+      }
+      
+      console.log('Received batch number for analysis:', batchNo);
+      console.log('Using language:', validLang);
+
+    // Convert the file to a buffer
+    const bytes = await imageFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64Image = buffer.toString('base64');
+
+    // Get the appropriate prompt based on language
+    const prompt = prompts[validLang];
 
     // Call OpenAI API with the image
     console.log('Calling OpenAI API with image...');
     console.log('Using model: gpt-4o');
     console.log('Image type:', imageFile.type);
     console.log('Image size:', imageFile.size, 'bytes');
+    console.log('Using language for prompt:', validLang);
     
     let response;
     try {
@@ -227,9 +309,10 @@ export async function POST(request: NextRequest) {
     console.error('Error analyzing image:', error);
     console.error('Error stack:', error.stack);
     console.error('Error details:', JSON.stringify(error, null, 2));
-    return NextResponse.json({
-      error: '分析照片時發生錯誤',
-      details: error.message,
-    }, { status: 500 });
+      // Default to Traditional Chinese for errors
+      return NextResponse.json({
+        error: errorMessages['zh-TW'].analyzeError,
+        details: error.message,
+      }, { status: 500 });
   }
 }

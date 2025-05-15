@@ -29,7 +29,7 @@ export default function Home() {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [batchNo, setBatchNo] = useState<string>('');
   const { isSignedIn, user } = useUser();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
 
   // Automatically sync user data to Supabase upon login
@@ -101,8 +101,10 @@ export default function Home() {
       const formData = new FormData();
       formData.append('image', images[index].file);
       formData.append('batchNo', batchNo);
+      formData.append('lang', language); // Add current language to the request
 
       console.log('Sending analysis request with batch number:', batchNo);
+      console.log('Using language for analysis:', language);
       const response = await fetch('/api/analyze', {
         method: 'POST',
         body: formData,
