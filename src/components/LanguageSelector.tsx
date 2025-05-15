@@ -17,14 +17,16 @@ const LanguageSelector = () => {
   const languageNames: Record<Language, string> = {
     'zh-TW': '繁體中文',
     'zh-CN': '简体中文',
-    'en': 'English'
+    'en': 'English',
+    'de': 'Deutsch' // Added German
   };
 
   // Language flags/icons (using emoji for simplicity)
   const languageIcons: Record<Language, string> = {
     'zh-TW': '🇹🇼',
     'zh-CN': '🇨🇳',
-    'en': '🇺🇸'
+    'en': '🇺🇸',
+    'de': '🇩🇪' // Added German flag
   };
 
   // Close dropdown when clicking outside

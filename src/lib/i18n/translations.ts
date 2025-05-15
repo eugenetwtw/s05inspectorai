@@ -1,6 +1,6 @@
 // Translation keys for the application
 
-export type Language = 'zh-TW' | 'zh-CN' | 'en';
+export type Language = 'zh-TW' | 'zh-CN' | 'en' | 'de'; // Added 'de'
 
 export type TranslationKeys = {
   // Common
@@ -552,5 +552,150 @@ The photo shows concrete pouring work at a construction site, with a newly poure
     errorRestoringRecord: 'Failed to restore record(s)',
     errorPermanentlyDeletingRecord: 'Failed to permanently delete record(s)',
     analyzedImageAlt: 'Analyzed Image',
+  },
+  'de': {
+    // Common
+    appName: 'KI für Baustellensicherheit & Qualitätsprüfung',
+    appDescription: 'Nutzen Sie KI-Visionmodelle zur Analyse von Baustellenfotos, Überprüfung von Sicherheitsproblemen, Baumängeln oder Fehlern',
+    
+    // Navigation
+    demo: 'Demo ansehen',
+    history: 'Verlauf',
+    login: 'Anmelden',
+    
+    // Main page
+    uploadPhotos: 'Baustellenfotos hochladen',
+    analyzeAllPhotos: 'Alle Fotos analysieren',
+    analyzing: 'Analysiere...',
+    analyzeThisPhoto: 'Dieses Foto analysieren',
+    fileName: 'Dateiname',
+    photo: 'Foto',
+    analysisResult: 'Analyseergebnis',
+    loginToSave: 'Zum Speichern der Analyseergebnisse anmelden',
+    copyResult: 'Ergebnis kopieren',
+    resultCopied: 'Analyseergebnis in die Zwischenablage kopiert',
+    
+    // Errors
+    uploadFirst: 'Bitte laden Sie zuerst Baustellenfotos hoch',
+    analysisError: 'Fehler bei der Fotoanalyse',
+    
+    // Footer
+    copyright: '© {year} KI für Baustellensicherheit & Qualitätsprüfung - KI-Visionmodelle verwenden',
+
+    // Demo Page Specific
+    demoPageTitle: 'Demo-Seite - Baustellen-KI-Prüfung',
+    demoFeatureTitle: 'Demo-Funktion',
+    demoFeatureDescription: 'Dies ist eine Demo-Seite, die das Hochladen mehrerer Fotos und die Analysefunktionen zeigt.',
+    demoNote: 'Hinweis: Dies ist eine Demo-Seite mit Modelldaten. Um den tatsächlichen Analyse-Verlauf anzuzeigen, besuchen Sie bitte die Seite',
+    analyzeAllPhotosDemo: 'Alle Demo-Fotos analysieren',
+    analyzeThisPhotoDemo: 'Dieses Demo-Foto analysieren',
+    sitePhotoAlt: 'Baustellenfoto-Demo',
+
+    // Demo Page - Image specific content
+    demoImage1Name: 'Stützpfeiler-Demo.jpg',
+    demoImage2Name: 'Baustelle-Demo.jpg',
+    demoAnalysis1: `(Deutsche Übersetzung der Analyse 1) Aus Sicht der öffentlichen Sicherheit und relevanter Baustellenvorschriften (z.B. Bauordnung in Deutschland) zeigt dieses Foto mehrere potenzielle Sicherheitsrisiken:
+
+1.  **Absturzgefahr**:
+    Das Foto zeigt eine tiefe Grube ohne sichtbare Geländer oder Sicherheitsbarrieren. Vorschriften erfordern in der Regel Absturzsicherungen für offene Gruben.
+
+2.  **Stolperfallen**:
+    Am Boden der Grube befinden sich Holzbretter und Schutt, die Stolperfallen darstellen.
+
+3.  **Strukturelle Stabilität**:
+    Hervorstehender Bewehrungsstahl muss gesichert werden.
+
+4.  **Unzureichende Beleuchtung**:
+    Der Bereich erscheint schlecht beleuchtet.
+
+5.  **Fehlende Warnhinweise**:
+    Keine sichtbaren Warnschilder.
+
+**Empfohlene Verbesserungen**:
+- Geländer oder Sicherheitsnetze installieren.
+- Schutt entfernen.
+- Bewehrungsstahl sichern.
+- Für ausreichende Beleuchtung sorgen.
+- Warnschilder anbringen.`,
+    demoAnalysis2: `(Deutsche Übersetzung der Analyse 2) Dieses Bild zeigt ebenfalls häufige Gefahren auf Baustellen:
+
+1.  **Absturzgefahren**: Ähnlich wie im ersten Bild deutet eine ungesicherte Kante auf Absturzrisiken hin.
+2.  **Schutt und mangelnde Ordnung**: Verstreute Materialien können zu Stolpern und Ausrutschen führen.
+3.  **Unsachgemäße Materiallagerung**.
+4.  **Potenzial für herabfallende Gegenstände**.
+5.  **Zugang und Fluchtwege**.
+
+**Empfehlungen**:
+- Kanten sichern.
+- Wege freihalten.
+- Materialien sicher lagern.
+- Fußleisten und Netze verwenden.
+- Sichere Zugänge gewährleisten.`,
+    demoAnalysis3: `(Deutsche Übersetzung der Analyse 3) 1. Fotoübersicht:
+Das Foto zeigt Betonierarbeiten auf einer Baustelle.
+
+2. Sicherheitsmängelanalyse:
+- Fehlende Sicherheitswarnzeichen.
+- Einige Arbeiter tragen keine Schutzhelme.
+- Unordnung durch Kabel und Werkzeuge.
+- Fehlende Geländer an Arbeitsbühnen.
+
+3. Hygienemängelanalyse:
+- Bauabfälle nicht rechtzeitig beseitigt.
+- Staubentwicklung.
+- Fehlende Reinigungsmöglichkeiten.
+
+4. Bauqualitätsanalyse:
+- Unebene Betonoberfläche.
+- Kiesnester sichtbar.
+- Undichte Schalungsfugen.
+- Unzureichende Nachbehandlung.
+
+5. Empfohlene Verbesserungsmaßnahmen:
+- Sicherheitsmanagement verstärken.
+- Warnzeichen und Geländer anbringen.
+- Betonier- und Verdichtungsprozesse verbessern.
+- Nachbehandlung des Betons intensivieren.
+- Baustellenreinigung etablieren.
+- Fachschulungen durchführen.
+- Qualitätskontrollen implementieren.`,
+
+    // History Page
+    historyPageTitle: 'Verlauf',
+    trashBinPageTitle: 'Papierkorb',
+    viewTrashBin: 'Papierkorb ansehen',
+    returnToHistory: 'Zurück zum Verlauf',
+    yourAnalysisHistory: 'Ihr Analyse-Verlauf',
+    trashBinInfo: 'Papierkorb (automatische Löschung nach 30 Tagen)',
+    selectAll: 'Alle auswählen',
+    restore: 'Wiederherstellen',
+    deletePermanently: 'Endgültig löschen',
+    deleteAction: 'Löschen',
+    selectBatchNumber: 'Chargennummer auswählen...',
+    batchPrefix: 'Charge: ',
+    loading: 'Lädt...',
+    errorPrefix: 'Fehler: ',
+    unauthorizedMessage: 'Sie müssen angemeldet sein, um den Verlauf anzuzeigen.',
+    loginReturnHome: 'Zur Startseite zum Anmelden',
+    noHistoryItems: 'Keine Verlaufsdaten gefunden.',
+    noTrashItems: 'Keine Elemente im Papierkorb.',
+    analysisDatePrefix: 'Analysedatum: ',
+    batchNumberPrefix: 'Chargennr.: ',
+    viewDetails: 'Details anzeigen',
+    willBePermanentlyDeletedOn: 'Wird am {date} endgültig gelöscht',
+    previousPage: 'Zurück',
+    nextPage: 'Weiter',
+    confirmPermanentDelete: 'Möchten Sie die ausgewählten Elemente wirklich endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+    itemsMovedToTrash: 'Ausgewählte Elemente in den Papierkorb verschoben.',
+    deleteFailed: 'Löschen fehlgeschlagen: {error}',
+    itemsRestored: 'Ausgewählte Elemente wiederhergestellt.',
+    restoreFailed: 'Wiederherstellen fehlgeschlagen: {error}',
+    itemsPermanentlyDeleted: 'Ausgewählte Elemente endgültig gelöscht.',
+    permanentDeleteFailed: 'Endgültiges Löschen fehlgeschlagen: {error}',
+    errorFetchingHistory: 'Verlauf konnte nicht abgerufen werden',
+    errorDeletingRecord: 'Einträge konnten nicht gelöscht werden',
+    errorRestoringRecord: 'Einträge konnten nicht wiederhergestellt werden',
+    errorPermanentlyDeletingRecord: 'Einträge konnten nicht endgültig gelöscht werden',
+    analyzedImageAlt: 'Analysiertes Bild',
   },
 };

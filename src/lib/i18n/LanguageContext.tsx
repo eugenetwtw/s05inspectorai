@@ -30,7 +30,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const urlLang = searchParams.get('lang') as Language | null;
     
-    if (urlLang && ['zh-TW', 'zh-CN', 'en'].includes(urlLang)) {
+    if (urlLang && ['zh-TW', 'zh-CN', 'en', 'de'].includes(urlLang)) { // Added 'de'
       setLanguageState(urlLang);
     } else {
       // Detect browser language
@@ -45,6 +45,8 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
         }
       } else if (browserLang.startsWith('en')) {
         setLanguageState('en');
+      } else if (browserLang.startsWith('de')) { // Added 'de'
+        setLanguageState('de');
       }
       // Default is already set to 'zh-TW'
     }
