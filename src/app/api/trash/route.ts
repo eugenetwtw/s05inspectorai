@@ -6,7 +6,8 @@ import {
   executePermanentDeletion, // Use the new function
   // permanentlyDeleteAnalyses, // Comment out or remove old one
   cleanupOldTrashItems,
-  upsertUser
+  upsertUser,
+  sql
 } from '../../../lib';
 
 // Get trash items

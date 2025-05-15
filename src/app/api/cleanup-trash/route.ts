@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cleanupOldTrashItems } from '../../../lib';
+import { cleanupOldTrashItems, sql } from '../../../lib';
 
 // This endpoint should be protected in production
 // For example, by using a secret key or restricting access to specific IPs

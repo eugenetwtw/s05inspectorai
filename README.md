@@ -22,7 +22,9 @@
 - Tailwind CSS
 - OpenAI API (GPT-4o 視覺模型)
 - Clerk.com (用戶認證)
-- Neon Database (PostgreSQL)
+- Supabase (PostgreSQL 資料庫與儲存)
+
+**注意**：此應用程式已從 Neon Database 和 Vercel Blob 遷移到 Supabase，用於資料庫管理和檔案儲存。
 
 ## 安裝與設定
 
@@ -48,14 +50,15 @@ OPENAI_API_KEY=your_openai_api_key
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
 
-# Neon Database
-DATABASE_URL=your_neon_database_url
+# Supabase Database and Storage
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 您需要：
 - 在 [OpenAI](https://platform.openai.com/) 創建 API 金鑰
 - 在 [Clerk.com](https://clerk.com/) 創建應用程式並獲取 API 金鑰
-- 在 [Neon](https://neon.tech/) 創建 PostgreSQL 資料庫並獲取連接字串
+- 在 [Supabase](https://supabase.com/) 創建專案並獲取專案 URL 和匿名金鑰
 
 4. 啟動開發伺服器
 ```bash

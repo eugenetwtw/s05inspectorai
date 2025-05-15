@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { saveAnalysisHistory, upsertUser } from '../../../lib';
-import { put } from '@vercel/blob';
+import { saveAnalysisHistory, upsertUser, sql } from '../../../lib';
 
 // Initialize OpenAI client with API key
 const openai = new OpenAI({
@@ -106,23 +105,36 @@ export async function POST(request: NextRequest) {
           await upsertUser(userIdString, 'unknown@example.com'); // Fallback if email is not found
         }
         
-        // Upload image to Vercel Blob instead of local filesystem
+        // Upload image to Supabase Storage instead of local filesystem
         const timestamp = Date.now();
         const filename = `${userIdString}_${timestamp}.${imageFile.type.split('/')[1]}`;
         
-        // Upload to Vercel Blob
-        const blob = await put(filename, imageFile, {
-          access: 'public',
-        });
+        // Upload to Supabase Storage
+        const { data: uploadData, error: uploadError } = await sql.storage
+          .from('analysis-images')
+          .upload(filename, imageFile, {
+            cacheControl: '3600',
+            upsert: false
+          });
         
-        // Save analysis to database with Blob URL
-        const imageUrl = blob.url;
+        if (uploadError) {
+          console.error('Error uploading image to Supabase Storage:', uploadError);
+          throw new Error('無法上傳圖片到儲存空間');
+        }
+        
+        // Get public URL for the uploaded file
+        const { data: publicUrlData } = sql.storage
+          .from('analysis-images')
+          .getPublicUrl(filename);
+        
+        // Save analysis to database with Supabase Storage URL
+        const imageUrl = publicUrlData.publicUrl;
         const metadata = {
           originalFilename: imageFile.name,
           mimeType: imageFile.type,
           size: imageFile.size,
           timestamp,
-          blobId: blob.url
+          storagePath: uploadData.path
         };
         
         await saveAnalysisHistory(userIdString, imageUrl, analysisText, metadata);
@@ -134,19 +146,26 @@ export async function POST(request: NextRequest) {
         // Continue even if database save fails
       }
     } else {
-      // For unauthenticated users, we can still upload to Blob but won't save to DB
+      // For unauthenticated users, we can still upload to Supabase Storage but won't save to DB
       try {
         const timestamp = Date.now();
         const filename = `temp_${timestamp}.${imageFile.type.split('/')[1]}`;
         
-        // Upload to Vercel Blob
-        await put(filename, imageFile, {
-          access: 'public',
-        });
+        // Upload to Supabase Storage
+        const { error: uploadError } = await sql.storage
+          .from('analysis-images')
+          .upload(filename, imageFile, {
+            cacheControl: '3600',
+            upsert: false
+          });
         
-        console.log('Image saved to Blob storage (temporary)');
+        if (uploadError) {
+          console.error('Error uploading temporary image to Supabase Storage:', uploadError);
+        } else {
+          console.log('Image saved to Supabase Storage (temporary)');
+        }
       } catch (saveError) {
-        console.error('Error saving image to Blob:', saveError);
+        console.error('Error saving image to Supabase Storage:', saveError);
         // Continue even if image save fails
       }
     }
