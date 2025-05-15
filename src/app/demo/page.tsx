@@ -186,7 +186,10 @@ export default function Demo() {
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold">工地安全與品質檢查 AI - 示範</h1>
-          <div>
+          <div className="flex items-center gap-4">
+            <Link href="/demo/trash-demo" className="text-blue-600 hover:text-blue-800">
+              查看回收桶功能示範
+            </Link>
             <Link href="/" className="text-blue-600 hover:text-blue-800">
               返回首頁
             </Link>

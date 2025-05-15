@@ -2,60 +2,71 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
-import ImageLightbox from '../../components/ImageLightbox';
 import { toast } from 'react-hot-toast';
+import ImageLightbox from '../../components/ImageLightbox';
 
-export default function History() {
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+// Mock data for testing
+const mockHistoryData = [
+  {
+    id: 1,
+    user_id: "user123",
+    image_url: "/60253.jpg",
+    analysis_text: "抱歉，我無法檢視或辨識圖片內容。然而，我可以告訴您如何進行工地安全與品質檢查。以下是建議的檢查步驟：\n1. **安全問題分析**：- 確認工人是否正確配戴安全裝備，如安全帽、安全帶和護目鏡。- 評估現場有無墜落危險，特別是高空作業區域需設置護欄或安全網。- 檢查電線和電設備是否有裸露、有無絕緣破損。- 確保重型機械操作安全，包括適當的警示標誌和隔離措施。",
+    created_at: "2025-05-14T04:19:34.000Z",
+    deleted: false,
+    deleted_at: null,
+    metadata: {}
+  },
+  {
+    id: 2,
+    user_id: "user123",
+    image_url: "/60254.jpg",
+    analysis_text: "抱歉，我無法查看或分析這張照片的人物。但我可以介紹一些檢查工地安全的要點，供您參考：\n1. 照片概述：- 這張照片展示了一個建築工地的場景，有多層鋼結構和建築材料。\n2. 安全問題分析：- 確保工人佩戴適當的個人防護裝備，如安全帽、安全帶等。- 注意鋼結構上的墜落風險，檢查是否有適當的圍欄和標誌。- 確保電氣設備和電線的安全性，避免觸電危險。",
+    created_at: "2025-05-14T04:19:04.000Z",
+    deleted: false,
+    deleted_at: null,
+    metadata: {}
+  },
+  {
+    id: 3,
+    user_id: "user123",
+    image_url: "/60253.jpg",
+    analysis_text: "I'm sorry, I can't assist with that....",
+    created_at: "2025-05-14T04:17:44.000Z",
+    deleted: false,
+    deleted_at: null,
+    metadata: {}
+  }
+];
+
+export default function MockHistory() {
+  const [history, setHistory] = useState(mockHistoryData);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [isTrashView, setIsTrashView] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
-  const router = useRouter();
-  const { isSignedIn, isLoaded } = useUser();
+  const [trashItems, setTrashItems] = useState<any[]>([]);
 
-  // Redirect if not signed in
+  // Initialize trash items
   useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push('/');
-    }
-  }, [isLoaded, isSignedIn, router]);
-
-  // Fetch history when component mounts or when trash view changes
-  useEffect(() => {
-    if (isSignedIn) {
-      fetchHistory();
-    }
-  }, [isSignedIn, isTrashView]);
-
-  const fetchHistory = async () => {
-    setLoading(true);
-    setSelectedItems([]);
-    try {
-      const url = isTrashView 
-        ? '/api/trash' 
-        : '/api/history';
-      
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${isTrashView ? 'trash' : 'history'}`);
+    // Create some mock trash items
+    setTrashItems([
+      {
+        id: 4,
+        user_id: "user123",
+        image_url: "/60254.jpg",
+        analysis_text: "抱歉，我無法提供這張照片的詳細分析或檢查。一般工地安全與質量檢查應遵循合格的專業人員在現場依據標準進行。如果需要，建議請專業的安全和質量檢查員到現場進行評估。若有任何具體問題或需改善的地方，請參考現場管理手冊或相關標準進行檢查和改進。...",
+        created_at: "2025-05-13T00:25:50.000Z",
+        deleted: true,
+        deleted_at: "2025-05-14T08:30:00.000Z",
+        metadata: {}
       }
-      
-      const data = await response.json();
-      setHistory(isTrashView ? (data.trashItems || []) : (data.history || []));
-    } catch (err) {
-      console.error(`Error fetching ${isTrashView ? 'trash' : 'history'}:`, err);
-      setError(isTrashView ? '獲取回收桶記錄時發生錯誤' : '獲取歷史記錄時發生錯誤');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
+    ]);
+  }, []);
+
   const toggleItemSelection = (id: number) => {
     setSelectedItems(prev => 
       prev.includes(id) 
@@ -65,12 +76,13 @@ export default function History() {
   };
   
   const toggleSelectAll = () => {
-    if (selectedItems.length === history.length) {
+    const currentItems = isTrashView ? trashItems : history;
+    if (selectedItems.length === currentItems.length) {
       // If all are selected, deselect all
       setSelectedItems([]);
     } else {
       // Otherwise, select all
-      setSelectedItems(history.map(item => item.id));
+      setSelectedItems(currentItems.map(item => item.id));
     }
   };
   
@@ -79,20 +91,21 @@ export default function History() {
     
     setIsDeleting(true);
     try {
-      const response = await fetch('/api/history', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ids: selectedItems }),
-      });
+      // Mock moving items to trash
+      const now = new Date().toISOString();
+      const itemsToMove = history.filter(item => selectedItems.includes(item.id));
+      const updatedItems = itemsToMove.map(item => ({
+        ...item,
+        deleted: true,
+        deleted_at: now
+      }));
       
-      if (!response.ok) {
-        throw new Error('Failed to delete items');
-      }
+      // Update history and trash items
+      setHistory(prev => prev.filter(item => !selectedItems.includes(item.id)));
+      setTrashItems(prev => [...prev, ...updatedItems]);
       
       toast.success('已將所選項目移至回收桶');
-      fetchHistory();
+      setSelectedItems([]);
     } catch (err) {
       console.error('Error moving items to trash:', err);
       toast.error('移動項目至回收桶時發生錯誤');
@@ -106,20 +119,20 @@ export default function History() {
     
     setIsRestoring(true);
     try {
-      const response = await fetch('/api/trash', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ids: selectedItems }),
-      });
+      // Mock restoring items from trash
+      const itemsToRestore = trashItems.filter(item => selectedItems.includes(item.id));
+      const updatedItems = itemsToRestore.map(item => ({
+        ...item,
+        deleted: false,
+        deleted_at: null
+      }));
       
-      if (!response.ok) {
-        throw new Error('Failed to restore items');
-      }
+      // Update history and trash items
+      setTrashItems(prev => prev.filter(item => !selectedItems.includes(item.id)));
+      setHistory(prev => [...prev, ...updatedItems]);
       
       toast.success('已恢復所選項目');
-      fetchHistory();
+      setSelectedItems([]);
     } catch (err) {
       console.error('Error restoring items from trash:', err);
       toast.error('恢復項目時發生錯誤');
@@ -137,20 +150,11 @@ export default function History() {
     
     setIsDeleting(true);
     try {
-      const response = await fetch('/api/trash', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ids: selectedItems }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to permanently delete items');
-      }
+      // Mock permanently deleting items
+      setTrashItems(prev => prev.filter(item => !selectedItems.includes(item.id)));
       
       toast.success('已永久刪除所選項目');
-      fetchHistory();
+      setSelectedItems([]);
     } catch (err) {
       console.error('Error permanently deleting items:', err);
       toast.error('永久刪除項目時發生錯誤');
@@ -166,8 +170,12 @@ export default function History() {
     // Don't navigate if in trash view
     if (isTrashView) return;
     
-    router.push(`/history/${id}`);
+    // Mock navigation - just show a toast
+    toast.success(`查看項目 #${id} 的詳情`);
   };
+
+  // Get the current items based on the view
+  const currentItems = isTrashView ? trashItems : history;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -184,7 +192,10 @@ export default function History() {
           
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setIsTrashView(!isTrashView)}
+              onClick={() => {
+                setIsTrashView(!isTrashView);
+                setSelectedItems([]);
+              }}
               className="text-sm py-1 px-3 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors duration-200 flex items-center gap-1"
             >
               {isTrashView ? (
@@ -214,12 +225,12 @@ export default function History() {
               {isTrashView ? '回收桶（30天後自動刪除）' : '您的分析歷史記錄'}
             </h2>
             
-            {history.length > 0 && (
+            {currentItems.length > 0 && (
               <div className="flex items-center gap-2">
                 <label className="flex items-center text-sm">
                   <input
                     type="checkbox"
-                    checked={selectedItems.length === history.length && history.length > 0}
+                    checked={selectedItems.length === currentItems.length && currentItems.length > 0}
                     onChange={toggleSelectAll}
                     className="mr-2 h-4 w-4"
                   />
@@ -277,7 +288,7 @@ export default function History() {
             <div className="p-3 bg-red-100 text-red-700 rounded-md">
               {error}
             </div>
-          ) : history.length === 0 ? (
+          ) : currentItems.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500">
                 {isTrashView ? '回收桶中沒有項目' : '尚無分析記錄'}
@@ -290,7 +301,7 @@ export default function History() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
-              {history.map((item) => (
+              {currentItems.map((item) => (
                 <div 
                   key={item.id} 
                   className={`border rounded-md p-4 relative ${!isTrashView ? 'cursor-pointer hover:bg-gray-50' : ''}`}
