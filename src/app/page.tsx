@@ -134,9 +134,6 @@ export default function Home() {
             </Link>
             <SignedIn>
               <div className="flex items-center gap-4">
-                <Link href="/history" className="text-blue-600 hover:text-blue-800">
-                  歷史記錄
-                </Link>
                 <UserButton />
               </div>
             </SignedIn>
@@ -259,7 +256,7 @@ export default function Home() {
 
           {!isSignedIn && (
             <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
-              <p>登入以保存分析結果並查看歷史記錄</p>
+              <p>登入以保存分析結果</p>
             </div>
           )}
 
