@@ -46,6 +46,44 @@ export type TranslationKeys = {
   demoAnalysis1: string;
   demoAnalysis2: string;
   demoAnalysis3: string; // For the third potential analysis
+
+  // History Page
+  historyPageTitle: string;
+  trashBinPageTitle: string;
+  viewTrashBin: string;
+  returnToHistory: string;
+  yourAnalysisHistory: string;
+  trashBinInfo: string;
+  selectAll: string;
+  restore: string;
+  deletePermanently: string;
+  deleteAction: string; // For "Move to Trash" action
+  selectBatchNumber: string;
+  batchPrefix: string;
+  loading: string;
+  errorPrefix: string;
+  unauthorizedMessage: string;
+  loginReturnHome: string;
+  noHistoryItems: string;
+  noTrashItems: string;
+  analysisDatePrefix: string;
+  batchNumberPrefix: string;
+  viewDetails: string;
+  willBePermanentlyDeletedOn: string; // e.g. "Will be permanently deleted on {date}"
+  previousPage: string;
+  nextPage: string;
+  confirmPermanentDelete: string;
+  itemsMovedToTrash: string;
+  deleteFailed: string;
+  itemsRestored: string;
+  restoreFailed: string;
+  itemsPermanentlyDeleted: string;
+  permanentDeleteFailed: string;
+  errorFetchingHistory: string;
+  errorDeletingRecord: string;
+  errorRestoringRecord: string;
+  errorPermanentlyDeletingRecord: string;
+  analyzedImageAlt: string;
 };
 
 export const translations: Record<Language, TranslationKeys> = {
@@ -169,6 +207,44 @@ export const translations: Record<Language, TranslationKeys> = {
 - 建立工地清潔制度，及時清理廢料和垃圾
 - 對施工人員進行專業技能培訓，提高施工質量意識
 - 實施定期質量檢查和驗收制度，確保符合設計要求`,
+
+    // History Page
+    historyPageTitle: '歷史記錄',
+    trashBinPageTitle: '回收桶',
+    viewTrashBin: '查看回收桶',
+    returnToHistory: '返回歷史記錄',
+    yourAnalysisHistory: '您的分析歷史記錄',
+    trashBinInfo: '回收桶（30天後自動刪除）',
+    selectAll: '全選',
+    restore: '恢復',
+    deletePermanently: '永久刪除',
+    deleteAction: '刪除',
+    selectBatchNumber: '選擇批次號碼...',
+    batchPrefix: '批次: ',
+    loading: '載入中...',
+    errorPrefix: '錯誤: ',
+    unauthorizedMessage: '您需要登入才能查看歷史記錄。',
+    loginReturnHome: '返回首頁登入',
+    noHistoryItems: '沒有找到歷史記錄。',
+    noTrashItems: '回收桶中沒有項目。',
+    analysisDatePrefix: '分析日期: ',
+    batchNumberPrefix: '批次編號: ',
+    viewDetails: '查看詳細內容',
+    willBePermanentlyDeletedOn: '將於 {date} 永久刪除',
+    previousPage: '上一頁',
+    nextPage: '下一頁',
+    confirmPermanentDelete: '確定要永久刪除所選項目嗎？此操作無法撤銷。',
+    itemsMovedToTrash: '已將所選項目移至回收桶',
+    deleteFailed: '刪除失敗: {error}',
+    itemsRestored: '已恢復所選項目',
+    restoreFailed: '恢復失敗: {error}',
+    itemsPermanentlyDeleted: '已永久刪除所選項目',
+    permanentDeleteFailed: '永久刪除失敗: {error}',
+    errorFetchingHistory: '無法獲取歷史記錄',
+    errorDeletingRecord: '無法刪除記錄',
+    errorRestoringRecord: '無法恢復記錄',
+    errorPermanentlyDeletingRecord: '無法永久刪除記錄',
+    analyzedImageAlt: '分析圖片',
   },
   'zh-CN': {
     // Common
@@ -290,6 +366,44 @@ export const translations: Record<Language, TranslationKeys> = {
 - 建立工地清洁制度，及时清理废料和垃圾
 - 对施工人员进行专业技能培训，提高施工质量意识
 - 实施定期质量检查和验收制度，确保符合设计要求`,
+
+    // History Page
+    historyPageTitle: '历史记录',
+    trashBinPageTitle: '回收桶',
+    viewTrashBin: '查看回收桶',
+    returnToHistory: '返回历史记录',
+    yourAnalysisHistory: '您的分析历史记录',
+    trashBinInfo: '回收桶（30天后自动删除）',
+    selectAll: '全选',
+    restore: '恢复',
+    deletePermanently: '永久删除',
+    deleteAction: '删除',
+    selectBatchNumber: '选择批次编号...',
+    batchPrefix: '批次: ',
+    loading: '加载中...',
+    errorPrefix: '错误: ',
+    unauthorizedMessage: '您需要登录才能查看历史记录。',
+    loginReturnHome: '返回首页登录',
+    noHistoryItems: '没有找到历史记录。',
+    noTrashItems: '回收桶中没有项目。',
+    analysisDatePrefix: '分析日期: ',
+    batchNumberPrefix: '批次编号: ',
+    viewDetails: '查看详细内容',
+    willBePermanentlyDeletedOn: '将于 {date} 永久删除',
+    previousPage: '上一页',
+    nextPage: '下一页',
+    confirmPermanentDelete: '确定要永久删除所选项目吗？此操作无法撤销。',
+    itemsMovedToTrash: '已将所选项目移至回收桶',
+    deleteFailed: '删除失败: {error}',
+    itemsRestored: '已恢复所选项目',
+    restoreFailed: '恢复失败: {error}',
+    itemsPermanentlyDeleted: '已永久删除所选项目',
+    permanentDeleteFailed: '永久删除失败: {error}',
+    errorFetchingHistory: '无法获取历史记录',
+    errorDeletingRecord: '无法删除记录',
+    errorRestoringRecord: '无法恢复记录',
+    errorPermanentlyDeletingRecord: '无法永久删除记录',
+    analyzedImageAlt: '分析图片',
   },
   'en': {
     // Common
@@ -400,5 +514,43 @@ The photo shows concrete pouring work at a construction site, with a newly poure
 - Establish a site cleaning system for timely removal of waste and debris.
 - Provide professional skills training for construction personnel to improve quality awareness.
 - Implement regular quality inspections and acceptance systems to ensure compliance with design requirements.`,
+    
+    // History Page
+    historyPageTitle: 'History',
+    trashBinPageTitle: 'Trash Bin',
+    viewTrashBin: 'View Trash Bin',
+    returnToHistory: 'Return to History',
+    yourAnalysisHistory: 'Your Analysis History',
+    trashBinInfo: 'Trash Bin (auto-deleted after 30 days)',
+    selectAll: 'Select All',
+    restore: 'Restore',
+    deletePermanently: 'Delete Permanently',
+    deleteAction: 'Delete',
+    selectBatchNumber: 'Select Batch Number...',
+    batchPrefix: 'Batch: ',
+    loading: 'Loading...',
+    errorPrefix: 'Error: ',
+    unauthorizedMessage: 'You need to log in to view history.',
+    loginReturnHome: 'Return to Homepage to Login',
+    noHistoryItems: 'No history items found.',
+    noTrashItems: 'No items in the trash bin.',
+    analysisDatePrefix: 'Analysis Date: ',
+    batchNumberPrefix: 'Batch No.: ',
+    viewDetails: 'View Details',
+    willBePermanentlyDeletedOn: 'Will be permanently deleted on {date}',
+    previousPage: 'Previous',
+    nextPage: 'Next',
+    confirmPermanentDelete: 'Are you sure you want to permanently delete the selected items? This action cannot be undone.',
+    itemsMovedToTrash: 'Selected items moved to trash.',
+    deleteFailed: 'Delete failed: {error}',
+    itemsRestored: 'Selected items restored.',
+    restoreFailed: 'Restore failed: {error}',
+    itemsPermanentlyDeleted: 'Selected items permanently deleted.',
+    permanentDeleteFailed: 'Permanent delete failed: {error}',
+    errorFetchingHistory: 'Failed to fetch history',
+    errorDeletingRecord: 'Failed to delete record(s)',
+    errorRestoringRecord: 'Failed to restore record(s)',
+    errorPermanentlyDeletingRecord: 'Failed to permanently delete record(s)',
+    analyzedImageAlt: 'Analyzed Image',
   },
 };

@@ -63,15 +63,22 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Translation function
-  const t = (key: keyof TranslationKeys): string => {
-    const translation = translations[language][key];
+  const t = (key: keyof TranslationKeys, replacements?: Record<string, string>): string => {
+    let translation = translations[language][key] || key.toString();
     
-    // Replace dynamic values like {year}
+    // Replace dynamic values like {year} for copyright
     if (key === 'copyright') {
-      return translation.replace('{year}', new Date().getFullYear().toString());
+      translation = translation.replace('{year}', new Date().getFullYear().toString());
+    }
+
+    // Handle other replacements if provided
+    if (replacements) {
+      Object.keys(replacements).forEach(placeholder => {
+        translation = translation.replace(new RegExp(`{${placeholder}}`, 'g'), replacements[placeholder]);
+      });
     }
     
-    return translation || key;
+    return translation;
   };
 
   return (

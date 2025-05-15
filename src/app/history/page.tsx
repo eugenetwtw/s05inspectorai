@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useLanguage } from '../../lib/i18n/LanguageContext'; // Import useLanguage
 import { format } from 'date-fns';
 import ImageLightbox from '../../components/ImageLightbox';
 
@@ -19,6 +20,11 @@ export default function History() {
   const [isRestoring, setIsRestoring] = useState(false);
   const [trashItems, setTrashItems] = useState<any[]>([]);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const { t, language } = useLanguage(); // Initialize useLanguage
+
+  useEffect(() => {
+    document.title = isTrashView ? t('trashBinPageTitle') : t('historyPageTitle');
+  }, [isTrashView, t, language]);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -35,7 +41,7 @@ export default function History() {
         }
         
         if (!response.ok) {
-          throw new Error('無法獲取歷史記錄');
+          throw new Error(t('errorFetchingHistory'));
         }
         
         const data = await response.json();
@@ -45,7 +51,7 @@ export default function History() {
           setHistory(data.history || []);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : '無法獲取歷史記錄');
+        setError(err instanceof Error ? err.message : t('errorFetchingHistory'));
       } finally {
         setLoading(false);
       }
@@ -54,7 +60,7 @@ export default function History() {
     fetchHistory();
     // Reset selected items when changing views or pages
     setSelectedItems([]);
-  }, [page, isTrashView]);
+  }, [page, isTrashView, t]); // Added t to dependency array
 
   const toggleItemSelection = (id: number) => {
     setSelectedItems(prev => 
@@ -89,14 +95,14 @@ export default function History() {
       });
       
       if (!response.ok) {
-        throw new Error('無法刪除記錄');
+        throw new Error(t('errorDeletingRecord'));
       }
       
       setHistory(history.filter(item => !selectedItems.includes(item.id)));
       setSelectedItems([]);
-      alert('已將所選項目移至回收桶');
+      alert(t('itemsMovedToTrash'));
     } catch (err) {
-      alert('刪除失敗: ' + (err instanceof Error ? err.message : '未知錯誤'));
+      alert(t('deleteFailed', { error: err instanceof Error ? err.message : t('analysisError') }));
     } finally {
       setIsDeleting(false);
     }
@@ -116,14 +122,14 @@ export default function History() {
       });
       
       if (!response.ok) {
-        throw new Error('無法恢復記錄');
+        throw new Error(t('errorRestoringRecord'));
       }
       
       setTrashItems(trashItems.filter(item => !selectedItems.includes(item.id)));
       setSelectedItems([]);
-      alert('已恢復所選項目');
+      alert(t('itemsRestored'));
     } catch (err) {
-      alert('恢復失敗: ' + (err instanceof Error ? err.message : '未知錯誤'));
+      alert(t('restoreFailed', { error: err instanceof Error ? err.message : t('analysisError') }));
     } finally {
       setIsRestoring(false);
     }
@@ -132,7 +138,7 @@ export default function History() {
   const handlePermanentDelete = async () => {
     if (selectedItems.length === 0) return;
     
-    if (!confirm('確定要永久刪除所選項目嗎？此操作無法撤銷。')) {
+    if (!confirm(t('confirmPermanentDelete'))) {
       return;
     }
     
@@ -147,14 +153,14 @@ export default function History() {
       });
       
       if (!response.ok) {
-        throw new Error('無法永久刪除記錄');
+        throw new Error(t('errorPermanentlyDeletingRecord'));
       }
       
       setTrashItems(trashItems.filter(item => !selectedItems.includes(item.id)));
       setSelectedItems([]);
-      alert('已永久刪除所選項目');
+      alert(t('itemsPermanentlyDeleted'));
     } catch (err) {
-      alert('永久刪除失敗: ' + (err instanceof Error ? err.message : '未知錯誤'));
+      alert(t('permanentDeleteFailed', { error: err instanceof Error ? err.message : t('analysisError') }));
     } finally {
       setIsDeleting(false);
     }
@@ -197,7 +203,7 @@ export default function History() {
                 <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
               </svg>
             </Link>
-            <h1 className="text-xl font-bold">{isTrashView ? '回收桶' : '歷史記錄'}</h1>
+            <h1 className="text-xl font-bold">{isTrashView ? t('trashBinPageTitle') : t('historyPageTitle')}</h1>
           </div>
           
           <div className="flex items-center gap-2">
@@ -214,14 +220,14 @@ export default function History() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                   </svg>
-                  <span>返回歷史記錄</span>
+                  <span>{t('returnToHistory')}</span>
                 </>
               ) : (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
-                  <span>查看回收桶</span>
+                  <span>{t('viewTrashBin')}</span>
                 </>
               )}
             </button>
@@ -233,7 +239,7 @@ export default function History() {
         <div className="bg-white rounded-lg shadow-md p-6 max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">
-              {isTrashView ? '回收桶（30天後自動刪除）' : '您的分析歷史記錄'}
+              {isTrashView ? t('trashBinInfo') : t('yourAnalysisHistory')}
             </h2>
             
             {currentItems.length > 0 && (
@@ -245,7 +251,7 @@ export default function History() {
                     onChange={toggleSelectAll}
                     className="mr-2 h-4 w-4"
                   />
-                  全選
+                  {t('selectAll')}
                 </label>
                 
                 {selectedItems.length > 0 && (
@@ -260,7 +266,7 @@ export default function History() {
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                           </svg>
-                          恢復
+                          {t('restore')}
                         </button>
                         <button
                           onClick={handlePermanentDelete}
@@ -270,7 +276,7 @@ export default function History() {
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
-                          永久刪除
+                          {t('deletePermanently')}
                         </button>
                       </>
                     ) : (
@@ -282,7 +288,7 @@ export default function History() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
-                        刪除
+                        {t('deleteAction')}
                       </button>
                     )}
                   </div>
@@ -303,30 +309,30 @@ export default function History() {
                 }}
                 value=""
               >
-                <option value="">選擇批次號碼...</option>
+                <option value="">{t('selectBatchNumber')}</option>
                 {batchNumbers.map(batch => (
-                  <option key={batch} value={batch}>批次: {batch}</option>
+                  <option key={batch} value={batch}>{t('batchPrefix')}{batch}</option>
                 ))}
               </select>
             </div>
           )}
           
-          {loading && <p className="text-gray-500">載入中...</p>}
-          {error && <p className="text-red-500">錯誤: {error}</p>}
+          {loading && <p className="text-gray-500">{t('loading')}</p>}
+          {error && <p className="text-red-500">{t('errorPrefix')}{error}</p>}
           {isUnauthorized && (
             <div className="p-4 bg-yellow-100 text-yellow-800 rounded-md mb-4">
-              <p className="mb-2">您需要登入才能查看歷史記錄。</p>
+              <p className="mb-2">{t('unauthorizedMessage')}</p>
               <button
                 onClick={() => window.location.href = '/'}
                 className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
               >
-                返回首頁登入
+                {t('loginReturnHome')}
               </button>
             </div>
           )}
           {!loading && !error && !isUnauthorized && currentItems.length === 0 && (
             <p className="text-gray-500">
-              {isTrashView ? '回收桶中沒有項目' : '沒有找到歷史記錄。'}
+              {isTrashView ? t('noTrashItems') : t('noHistoryItems')}
             </p>
           )}
           
@@ -354,7 +360,7 @@ export default function History() {
                         >
                           <Image
                             src={item.image_url}
-                            alt="分析圖片"
+                            alt={t('analyzedImageAlt')}
                             fill
                             sizes="64px"
                             className="rounded-md object-cover"
@@ -365,18 +371,18 @@ export default function History() {
                       {/* Content */}
                       <div className="flex-grow">
                         <p className="font-medium">
-                          分析日期: {format(new Date(item.created_at), 'yyyy/MM/dd HH:mm')}
+                          {t('analysisDatePrefix')}{format(new Date(item.created_at), 'yyyy/MM/dd HH:mm')}
                         </p>
-                        {item.batch_no && <p className="text-sm text-gray-600">批次編號: {item.batch_no}</p>}
+                        {item.batch_no && <p className="text-sm text-gray-600">{t('batchNumberPrefix')}{item.batch_no}</p>}
                         <p className="text-sm text-gray-600 line-clamp-2">{item.analysis_text}</p>
                         
                         {!isTrashView ? (
                           <Link href={`/history/${item.id}`} className="text-blue-600 hover:text-blue-800 text-sm">
-                            查看詳細內容
+                            {t('viewDetails')}
                           </Link>
                         ) : item.deleted_at && (
                           <p className="text-xs text-red-500 mt-1">
-                            將於 {format(new Date(new Date(item.deleted_at).getTime() + 30 * 24 * 60 * 60 * 1000), 'yyyy/MM/dd')} 永久刪除
+                            {t('willBePermanentlyDeletedOn', { date: format(new Date(new Date(item.deleted_at).getTime() + 30 * 24 * 60 * 60 * 1000), 'yyyy/MM/dd') })}
                           </p>
                         )}
                       </div>
@@ -391,13 +397,13 @@ export default function History() {
                   className="py-2 px-4 bg-gray-200 hover:bg-gray-300 rounded-md disabled:opacity-50"
                   disabled={page === 1}
                 >
-                  上一頁
+                  {t('previousPage')}
                 </button>
                 <button
                   onClick={() => setPage(page + 1)}
                   className="py-2 px-4 bg-gray-200 hover:bg-gray-300 rounded-md"
                 >
-                  下一頁
+                  {t('nextPage')}
                 </button>
               </div>
             </div>
@@ -406,7 +412,7 @@ export default function History() {
       </main>
 
       <footer className="text-center py-6 text-gray-500 text-sm">
-        © {new Date().getFullYear()} 工地安全與品質檢查 AI - 使用 AI 視覺模型
+        {t('copyright')}
       </footer>
       
       {/* Lightbox for enlarged images */}
