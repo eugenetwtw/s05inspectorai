@@ -69,11 +69,11 @@ export default function RootLayout({
         <body>
           <Suspense fallback={null}>
             <LanguageProvider>
-              <AppHeader />
+              {/* AppHeader removed as per user feedback to eliminate duplicate header */}
               <main>
                 {children}
               </main>
-              <AppFooter />
+              {/* AppFooter removed for consistency as page.tsx provides its own footer */}
             </LanguageProvider>
           </Suspense>
           <Toaster position="top-center" />
