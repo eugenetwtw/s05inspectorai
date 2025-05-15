@@ -2,11 +2,10 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-// Create a language detection middleware
-function languageMiddleware(req: NextRequest) {
-  const url = req.nextUrl.clone();
-  
+// Create a middleware function that handles language detection and authentication
+export default function middleware(req: NextRequest) {
   // Check if the URL already has a language parameter
+  const url = req.nextUrl.clone();
   const hasLangParam = url.searchParams.has('lang');
   
   // If the URL doesn't have a language parameter, add it based on the Accept-Language header
@@ -31,25 +30,14 @@ function languageMiddleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
   
-  // If the URL already has a language parameter or it's an API route, continue
+  // If the URL already has a language parameter or it's an API route, continue with normal flow
+  // Let Clerk's middleware handle authentication through the exported authMiddleware
   return NextResponse.next();
 }
 
-// Export a default middleware function
-export default function middleware(req: NextRequest) {
-  // First apply language middleware
-  const languageResponse = languageMiddleware(req);
-  
-  // If language middleware redirected, return that response
-  if (languageResponse.status !== 200) {
-    return languageResponse;
-  }
-  
-  // Otherwise, continue with normal flow
-  return NextResponse.next();
-}
+// Export Clerk's middleware for authentication
+export const authMiddleware = clerkMiddleware();
 
-// Use the same matcher configuration as before
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params

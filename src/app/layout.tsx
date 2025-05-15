@@ -16,12 +16,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Get the Accept-Language header to determine initial language
-  // This is just for initial SSR rendering, client-side will handle language detection
+  // Get the Accept-Language header to determine initial language for HTML lang attribute
   const headersList = headers();
   const acceptLanguage = headersList.get("accept-language") || "";
   
-  // Determine initial language for SSR
+  // Determine initial language for HTML lang attribute
   let initialLang = "zh-TW"; // Default
   
   if (acceptLanguage.includes("en")) {

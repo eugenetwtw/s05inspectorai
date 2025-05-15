@@ -58,8 +58,8 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set('lang', lang);
     
-    // Use window.history to update URL without navigation
-    window.history.pushState({}, '', `${pathname}?${newParams.toString()}`);
+    // Use router to navigate to the new URL
+    router.push(`${pathname}?${newParams.toString()}`);
   };
 
   // Translation function

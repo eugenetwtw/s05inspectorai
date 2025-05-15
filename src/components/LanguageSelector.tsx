@@ -3,11 +3,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../lib/i18n/LanguageContext';
 import { Language } from '../lib/i18n/translations';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 const LanguageSelector = () => {
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
   // Language display names
   const languageNames: Record<Language, string> = {
