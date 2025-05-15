@@ -19,13 +19,13 @@ export interface AnalysisHistory {
 }
 
 // Initialize the neon client with the connection string
-const sql = neon(process.env.DATABASE_URL || '');
+const sqlClient = neon(process.env.DATABASE_URL || '');
 
 // Function to initialize the database schema
-export async function initializeDatabase(): Promise<boolean> {
+async function initializeDatabase(): Promise<boolean> {
   try {
     // Create users table if it doesn't exist
-    await sql`
+    await sqlClient`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         email TEXT UNIQUE NOT NULL,
@@ -34,7 +34,7 @@ export async function initializeDatabase(): Promise<boolean> {
     `;
 
     // Create analysis_history table if it doesn't exist
-    await sql`
+    await sqlClient`
       CREATE TABLE IF NOT EXISTS analysis_history (
         id SERIAL PRIMARY KEY,
         user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -49,7 +49,7 @@ export async function initializeDatabase(): Promise<boolean> {
 
     // Add deleted and deleted_at columns if they don't exist
     try {
-      await sql`
+      await sqlClient`
         ALTER TABLE analysis_history 
         ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT FALSE,
         ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITH TIME ZONE
@@ -67,9 +67,9 @@ export async function initializeDatabase(): Promise<boolean> {
 }
 
 // Function to create or update a user
-export async function upsertUser(userId: string, email: string): Promise<any> {
+async function upsertUser(userId: string, email: string): Promise<any> {
   try {
-    const result = await sql`
+    const result = await sqlClient`
       INSERT INTO users (id, email)
       VALUES (${userId}, ${email})
       ON CONFLICT (id) DO UPDATE
@@ -84,14 +84,14 @@ export async function upsertUser(userId: string, email: string): Promise<any> {
 }
 
 // Function to save analysis history
-export async function saveAnalysisHistory(
+async function saveAnalysisHistory(
   userId: string, 
   imageUrl: string, 
   analysisText: string, 
   metadata: any = {}
 ): Promise<any> {
   try {
-    const result = await sql`
+    const result = await sqlClient`
       INSERT INTO analysis_history (user_id, image_url, analysis_text, metadata)
       VALUES (${userId}, ${imageUrl}, ${analysisText}, ${JSON.stringify(metadata)})
       RETURNING *
@@ -104,14 +104,14 @@ export async function saveAnalysisHistory(
 }
 
 // Function to get user's analysis history
-export async function getUserAnalysisHistory(
+async function getUserAnalysisHistory(
   userId: string, 
   limit: number = 10, 
   offset: number = 0,
   showDeleted: boolean = false
 ): Promise<any[]> {
   try {
-    const result = await sql`
+    const result = await sqlClient`
       SELECT * FROM analysis_history
       WHERE user_id = ${userId}
       AND deleted = ${showDeleted}
@@ -126,15 +126,15 @@ export async function getUserAnalysisHistory(
 }
 
 // Function to get a specific analysis by ID
-export async function getAnalysisById(
+async function getAnalysisById(
   id: string | number, 
   userId: string,
   includeDeleted: boolean = false
 ): Promise<any | null> {
   try {
     const query = includeDeleted 
-      ? sql`SELECT * FROM analysis_history WHERE id = ${id} AND user_id = ${userId}`
-      : sql`SELECT * FROM analysis_history WHERE id = ${id} AND user_id = ${userId} AND deleted = false`;
+      ? sqlClient`SELECT * FROM analysis_history WHERE id = ${id} AND user_id = ${userId}`
+      : sqlClient`SELECT * FROM analysis_history WHERE id = ${id} AND user_id = ${userId} AND deleted = false`;
     
     const result = await query;
     return result[0] || null;
@@ -145,7 +145,7 @@ export async function getAnalysisById(
 }
 
 // Function to mark analyses as deleted (move to trash)
-export async function moveAnalysesToTrash(
+async function moveAnalysesToTrash(
   ids: number[], 
   userId: string
 ): Promise<boolean> {
@@ -154,7 +154,7 @@ export async function moveAnalysesToTrash(
     
     // Process each ID individually to avoid array conversion issues
     for (const id of ids) {
-      await sql`
+      await sqlClient`
         UPDATE analysis_history
         SET deleted = true, deleted_at = ${now}
         WHERE id = ${id} AND user_id = ${userId}
@@ -169,14 +169,14 @@ export async function moveAnalysesToTrash(
 }
 
 // Function to restore analyses from trash
-export async function restoreAnalysesFromTrash(
+async function restoreAnalysesFromTrash(
   ids: number[], 
   userId: string
 ): Promise<boolean> {
   try {
     // Process each ID individually to avoid array conversion issues
     for (const id of ids) {
-      await sql`
+      await sqlClient`
         UPDATE analysis_history
         SET deleted = false, deleted_at = null
         WHERE id = ${id} AND user_id = ${userId}
@@ -193,14 +193,14 @@ export async function restoreAnalysesFromTrash(
 import { del } from '@vercel/blob';
 
 // Function to permanently delete analyses
-export async function permanentlyDeleteAnalyses(
+async function permanentlyDeleteAnalyses(
   ids: number[], 
   userId: string
 ): Promise<boolean> {
   console.log(`Attempting to permanently delete items with IDs: [${ids.join(', ')}] for user: ${userId}`);
   try {
     // First get all the image URLs and IDs we need to delete
-    const itemsToDelete = await sql`
+    const itemsToDelete = await sqlClient`
       SELECT id, image_url FROM analysis_history
       WHERE id = ANY(${ids}) AND user_id = ${userId}
     `;
@@ -236,7 +236,7 @@ export async function permanentlyDeleteAnalyses(
     // We use the IDs from itemsToDelete to ensure we only try to delete records that were confirmed to exist for this user
     const actualIdsToDelete = itemsToDelete.map(item => item.id);
     if (actualIdsToDelete.length > 0) {
-      const deleteResult = await sql`
+      const deleteResult = await sqlClient`
         DELETE FROM analysis_history
         WHERE id = ANY(${actualIdsToDelete}) AND user_id = ${userId}
       `;
@@ -257,13 +257,13 @@ export async function permanentlyDeleteAnalyses(
 }
 
 // Function to clean up old trash items (older than 30 days)
-export async function cleanupOldTrashItems(): Promise<boolean> {
+async function cleanupOldTrashItems(): Promise<boolean> {
   try {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     // Find items to delete
-    const itemsToClean = await sql`
+    const itemsToClean = await sqlClient`
       SELECT id, image_url FROM analysis_history
       WHERE deleted = true AND deleted_at < ${thirtyDaysAgo}
     `;
@@ -290,7 +290,7 @@ export async function cleanupOldTrashItems(): Promise<boolean> {
 
     // Delete database records
     const idsToClean = itemsToClean.map(item => item.id);
-    await sql`
+    await sqlClient`
       DELETE FROM analysis_history
       WHERE id = ANY(${idsToClean})
     `;
@@ -303,5 +303,16 @@ export async function cleanupOldTrashItems(): Promise<boolean> {
   }
 }
 
-// Export the sql client for direct use
-export { sql };
+// Export all functions and the sql client
+export {
+  initializeDatabase,
+  upsertUser,
+  saveAnalysisHistory,
+  getUserAnalysisHistory,
+  getAnalysisById,
+  moveAnalysesToTrash,
+  restoreAnalysesFromTrash,
+  permanentlyDeleteAnalyses,
+  cleanupOldTrashItems,
+  sqlClient as sql // Export sqlClient as sql for compatibility
+};
