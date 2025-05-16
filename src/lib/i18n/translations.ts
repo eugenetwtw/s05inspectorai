@@ -133,31 +133,25 @@ export const translations: Record<Language, TranslationKeys> = {
     // Demo Page - Image specific content
     demoImage1Name: '工地支撐柱-示範.jpg',
     demoImage2Name: '施工現場-示範.jpg',
-    demoAnalysis1: `從公共安全和台灣工地相關法規的角度來看，這張照片顯示的工地存在以下安全風險：
-
-1. **高處作業風險**：
-   照片顯示一個深坑，沒有明顯的護欄或安全圍欄。根據台灣《職業安全衛生法》和《營造安全衛生設施標準》，高處作業（高度超過2公尺）必須設置護欄、蓋板或安全網，避免人員墜落。
-
-2. **地面雜物與絆倒風險**：
-   坑底有木板、垃圾和其他雜物，容易造成工人絆倒或滑倒。《營造安全衛生設施標準》第4條規定，工地應保持整潔，避免散落物導致意外。
-
-3. **結構穩定性問題**：
-   混凝土牆上有突出的鋼筋，沒有妥善處理，可能刺傷工人或因結構不穩導致崩塌風險。根據法規，鋼筋端部應彎折或加裝保護蓋。
-
-4. **照明不足**：
-   照片中光線昏暗，照明明顯不足。《營造安全衛生設施標準》第19條要求工地必須提供充足照明，確保工人能清楚辨識環境，避免意外。
-
-5. **缺乏安全警示**：
-   沒有看到警示標誌或告示牌，提醒工人注意深坑危險。法規要求危險區域必須設置明顯的警示標誌。
-
-**建議改善措施**：
-- 設置護欄或安全網，避免墜落。
-- 清理地面雜物，保持工作區域整潔。
-- 處理突出鋼筋，確保結構安全。
-- 提供充足照明，確保工作環境安全。
-- 設置警示標誌，提醒工人注意危險。
-
-這些問題若不改善，可能違反台灣的職業安全法規，並增加工地意外的風險。`,
+    demoAnalysis1: `分析結果:
+1. 照片概述：
+   - 照片顯示了一根鏽蝕的鋼製支撐杆，旁邊有一些木板和其他建築材料。
+2. 安全問題分析：
+   - 鋼支撐杆有明顯的鏽蝕，可能影響其結構完整性和承重能力。
+   - 鋼材周圍的鋼線用於固定，可能缺乏堅固和牢靠性，加大倒塌和受傷風險。
+   - 照片中未能看到工人及其個人防護裝備的使用情況。
+3. 衛生問題分析：
+   - 支撐杆和周圍建築材料有鏽跡和塵埃，可能意味著未進行適當清理。
+   - 照片中無法確定廢棄物處理的情況。
+4. 施工品質分析：
+   - 鏽蝕的鋼支撐杆表示未妥善維護或使用不適當的材料。
+   - 不正確的綁紮方法可能意味著安裝技術不符合標準。
+5. 建議改善措施：
+   - 定期檢查並維護工地的金屬支撐結構，防止鏽蝕影響安全。
+   - 使用適當的固定工具來更換鋼線，以確保支撐杆的穩固性。
+   - 確保定期清理施工現場，減少鏽蝕和污染。
+   - 提供工人正確的個人防護裝備，並確保其保持良好狀態。
+   - 定期培訓工人施工技術，確保符合安全和品質標準。`,
     demoAnalysis2: `從公共安全和台灣工地相關法規的角度來看，這張照片顯示的工地存在以下安全風險：
 
 1. **高處作業風險**：
@@ -297,31 +291,25 @@ export const translations: Record<Language, TranslationKeys> = {
     // Demo Page - Image specific content
     demoImage1Name: '工地支撑柱-示范.jpg',
     demoImage2Name: '施工现场-示范.jpg',
-    demoAnalysis1: `从公共安全和中国工地相关法规的角度来看，这张照片显示的工地存在以下安全风险：
-
-1. **高处作业风险**：
-   照片显示一个深坑，没有明显的护栏或安全围栏。根据中国《安全生产法》和相关建筑施工安全规范，高处作业（通常指高度超过2米）必须设置防护栏杆、盖板或安全网，防止人员坠落。
-
-2. **地面杂物与绊倒风险**：
-   坑底有木板、垃圾和其他杂物，容易造成工人绊倒或滑倒。相关规范要求施工现场应保持整洁，清除散落物以防意外。
-
-3. **结构稳定性问题**：
-   混凝土墙上有突出的钢筋，未妥善处理，可能刺伤工人或因结构不稳定导致坍塌风险。法规要求钢筋末端应作弯折处理或加装保护帽。
-
-4. **照明不足**：
-   照片中光线昏暗，照明明显不足。施工安全规范要求工地必须提供充足照明，确保工人能清晰辨识环境，避免事故。
-
-5. **缺乏安全警示**：
-   未见警示标志或告示牌，提醒工人注意深坑危险。法规要求在危险区域设置明显的安全警示标志。
-
-**建议改善措施**：
-- 设置护栏或安全网，防止坠落。
-- 清理地面杂物，保持工作区域整洁。
-- 处理突出钢筋，确保结构安全。
-- 提供充足照明，确保工作环境安全。
-- 设置警示标志，提醒工人注意危险。
-
-这些问题若不改善，可能违反中国的安全生产法规，并增加工地意外的风险。`,
+    demoAnalysis1: `分析结果:
+1. 照片概述：
+   - 照片显示了一根锈蚀的钢制支撑杆，旁边有一些木板和其他建筑材料。
+2. 安全问题分析：
+   - 钢支撑杆有明显的锈蚀，可能影响其结构完整性和承重能力。
+   - 钢材周围的钢线用于固定，可能缺乏坚固和牢靠性，加大倒塌和受伤风险。
+   - 照片中未能看到工人及其个人防护装备的使用情况。
+3. 卫生问题分析：
+   - 支撑杆和周围建筑材料有锈迹和尘埃，可能意味着未进行适当清理。
+   - 照片中无法确定废弃物处理的情况。
+4. 施工质量分析：
+   - 锈蚀的钢支撑杆表示未妥善维护或使用不适当的材料。
+   - 不正确的绑扎方法可能意味着安装技术不符合标准。
+5. 建议改善措施：
+   - 定期检查并维护工地的金属支撑结构，防止锈蚀影响安全。
+   - 使用适当的固定工具来更换钢线，以确保支撑杆的稳固性。
+   - 确保定期清理施工现场，减少锈蚀和污染。
+   - 提供工人正确的个人防护装备，并确保其保持良好状态。
+   - 定期培训工人施工技术，确保符合安全和质量标准。`,
     demoAnalysis2: `从公共安全和中国工地相关法规的角度来看，这张照片显示的工地存在以下安全风险：
 
 1. **高处作业风险**：
@@ -461,31 +449,25 @@ export const translations: Record<Language, TranslationKeys> = {
     // Demo Page - Image specific content
     demoImage1Name: 'SupportPillar-Demo.jpg',
     demoImage2Name: 'ConstructionSite-Demo.jpg',
-    demoAnalysis1: `From a public safety and relevant construction site regulation perspective (e.g., OSHA in the US), this photo shows several potential safety risks:
-
-1.  **Fall Hazard**:
-    The photo shows a deep pit without apparent guardrails or safety barriers. Regulations typically require fall protection (guardrails, covers, or safety nets) for open pits or excavations deeper than a certain threshold (e.g., 6 feet in OSHA standards) to prevent personnel from falling.
-
-2.  **Tripping Hazards**:
-    The bottom of the pit contains wooden planks, debris, and other materials, which can cause workers to trip or slip. Good housekeeping practices are essential on construction sites.
-
-3.  **Structural Stability Issues**:
-    Rebar protruding from concrete walls, if not properly capped or bent, can impale workers. Unstable structures also pose a collapse risk.
-
-4.  **Inadequate Lighting**:
-    The area appears dimly lit. Sufficient illumination is required for workers to identify hazards and perform tasks safely.
-
-5.  **Lack of Warning Signs**:
-    No visible warning signs or barricades are present to alert workers to the danger of the deep pit.
-
-**Recommended Improvements**:
-- Install guardrails or safety nets.
-- Clear debris and maintain good housekeeping.
-- Cap or bend rebar and ensure structural integrity.
-- Provide adequate lighting.
-- Post clear warning signs.
-
-Failure to address these issues could violate safety regulations and increase the risk of accidents.`,
+    demoAnalysis1: `Analysis Results:
+1. Photo Overview:
+   - The photo shows a rusted steel support pole, with some wooden planks and other construction materials nearby.
+2. Safety Issues Analysis:
+   - The steel support pole shows significant rust, which may affect its structural integrity and load-bearing capacity.
+   - Steel wires around the steel are used for securing, which may lack sturdiness and reliability, increasing the risk of collapse and injury.
+   - The photo does not show workers or the use of personal protective equipment.
+3. Hygiene Issues Analysis:
+   - The support pole and surrounding construction materials have rust stains and dust, possibly indicating inadequate cleaning.
+   - The photo does not allow for determination of waste disposal conditions.
+4. Construction Quality Analysis:
+   - The rusted steel support pole suggests improper maintenance or use of unsuitable materials.
+   - Incorrect binding methods may indicate that installation techniques do not meet standards.
+5. Recommended Improvement Measures:
+   - Regularly inspect and maintain metal support structures on the site to prevent rust from affecting safety.
+   - Use appropriate securing tools to replace steel wires, ensuring the stability of the support pole.
+   - Ensure regular cleaning of the construction site to reduce rust and contamination.
+   - Provide workers with proper personal protective equipment and ensure it remains in good condition.
+   - Conduct regular training for workers on construction techniques to ensure compliance with safety and quality standards.`,
     demoAnalysis2: `This image also depicts several common construction site hazards:
 
 1.  **Fall Hazards**: Similar to the first image, an unguarded edge or opening suggests a risk of falls.
@@ -614,29 +596,25 @@ The photo shows concrete pouring work at a construction site, with a newly poure
     // Demo Page - Image specific content
     demoImage1Name: 'Stützpfeiler-Demo.jpg',
     demoImage2Name: 'Baustelle-Demo.jpg',
-    demoAnalysis1: `(Deutsche Übersetzung der Analyse 1) Aus Sicht der öffentlichen Sicherheit und relevanter Baustellenvorschriften (z.B. Bauordnung in Deutschland) zeigt dieses Foto mehrere potenzielle Sicherheitsrisiken:
-
-1.  **Absturzgefahr**:
-    Das Foto zeigt eine tiefe Grube ohne sichtbare Geländer oder Sicherheitsbarrieren. Vorschriften erfordern in der Regel Absturzsicherungen für offene Gruben.
-
-2.  **Stolperfallen**:
-    Am Boden der Grube befinden sich Holzbretter und Schutt, die Stolperfallen darstellen.
-
-3.  **Strukturelle Stabilität**:
-    Hervorstehender Bewehrungsstahl muss gesichert werden.
-
-4.  **Unzureichende Beleuchtung**:
-    Der Bereich erscheint schlecht beleuchtet.
-
-5.  **Fehlende Warnhinweise**:
-    Keine sichtbaren Warnschilder.
-
-**Empfohlene Verbesserungen**:
-- Geländer oder Sicherheitsnetze installieren.
-- Schutt entfernen.
-- Bewehrungsstahl sichern.
-- Für ausreichende Beleuchtung sorgen.
-- Warnschilder anbringen.`,
+    demoAnalysis1: `Analyseergebnisse:
+1. Fotoübersicht:
+   - Das Foto zeigt einen verrosteten Stahlstützpfahl, daneben einige Holzbretter und andere Baumaterialien.
+2. Sicherheitsmängelanalyse:
+   - Der Stahlstützpfahl zeigt erheblichen Rost, der die strukturelle Integrität und Tragfähigkeit beeinträchtigen könnte.
+   - Stahldrähte um den Stahl dienen der Sicherung, könnten jedoch an Stabilität und Zuverlässigkeit mangeln, was das Risiko von Einsturz und Verletzungen erhöht.
+   - Auf dem Foto sind keine Arbeiter oder die Verwendung persönlicher Schutzausrüstung zu sehen.
+3. Hygienemängelanalyse:
+   - Der Stützpfahl und die umliegenden Baumaterialien weisen Rostflecken und Staub auf, was möglicherweise auf unzureichende Reinigung hinweist.
+   - Das Foto erlaubt keine Bestimmung der Entsorgungsbedingungen für Abfälle.
+4. Bauqualitätsanalyse:
+   - Der verrostete Stahlstützpfahl deutet auf unsachgemäße Wartung oder die Verwendung ungeeigneter Materialien hin.
+   - Falsche Bindemethoden könnten darauf hindeuten, dass die Installationstechniken nicht den Standards entsprechen.
+5. Empfohlene Verbesserungsmaßnahmen:
+   - Regelmäßige Inspektion und Wartung der Metallstützstrukturen auf der Baustelle, um Rost zu verhindern, der die Sicherheit beeinträchtigt.
+   - Verwendung geeigneter Sicherungswerkzeuge, um Stahldrähte zu ersetzen und die Stabilität des Stützpfahls zu gewährleisten.
+   - Sicherstellen einer regelmäßigen Reinigung der Baustelle, um Rost und Verschmutzung zu reduzieren.
+   - Bereitstellung der richtigen persönlichen Schutzausrüstung für Arbeiter und Sicherstellung, dass diese in gutem Zustand bleibt.
+   - Regelmäßige Schulung der Arbeiter in Bautechniken, um die Einhaltung von Sicherheits- und Qualitätsstandards zu gewährleisten.`,
     demoAnalysis2: `(Deutsche Übersetzung der Analyse 2) Dieses Bild zeigt ebenfalls häufige Gefahren auf Baustellen:
 
 1.  **Absturzgefahren**: Ähnlich wie im ersten Bild deutet eine ungesicherte Kante auf Absturzrisiken hin.

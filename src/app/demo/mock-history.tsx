@@ -11,7 +11,7 @@ const mockHistoryData = [
     id: 1,
     user_id: "user123",
     image_url: "/60253.jpg",
-    analysis_text: "抱歉，我無法檢視或辨識圖片內容。然而，我可以告訴您如何進行工地安全與品質檢查。以下是建議的檢查步驟：\n1. **安全問題分析**：- 確認工人是否正確配戴安全裝備，如安全帽、安全帶和護目鏡。- 評估現場有無墜落危險，特別是高空作業區域需設置護欄或安全網。- 檢查電線和電設備是否有裸露、有無絕緣破損。- 確保重型機械操作安全，包括適當的警示標誌和隔離措施。",
+    analysis_text: "demoAnalysis1", // This will be replaced with translated content from translations.ts
     created_at: "2025-05-14T04:19:34.000Z",
     deleted: false,
     deleted_at: null,
@@ -21,7 +21,7 @@ const mockHistoryData = [
     id: 2,
     user_id: "user123",
     image_url: "/60254.jpg",
-    analysis_text: "抱歉，我無法查看或分析這張照片的人物。但我可以介紹一些檢查工地安全的要點，供您參考：\n1. 照片概述：- 這張照片展示了一個建築工地的場景，有多層鋼結構和建築材料。\n2. 安全問題分析：- 確保工人佩戴適當的個人防護裝備，如安全帽、安全帶等。- 注意鋼結構上的墜落風險，檢查是否有適當的圍欄和標誌。- 確保電氣設備和電線的安全性，避免觸電危險。",
+    analysis_text: "demoAnalysis2", // This will be replaced with translated content from translations.ts
     created_at: "2025-05-14T04:19:04.000Z",
     deleted: false,
     deleted_at: null,
@@ -31,7 +31,7 @@ const mockHistoryData = [
     id: 3,
     user_id: "user123",
     image_url: "/60253.jpg",
-    analysis_text: "I'm sorry, I can't assist with that....",
+    analysis_text: "demoAnalysis3", // This will be replaced with translated content from translations.ts
     created_at: "2025-05-14T04:17:44.000Z",
     deleted: false,
     deleted_at: null,
@@ -58,7 +58,7 @@ export default function MockHistory() {
         id: 4,
         user_id: "user123",
         image_url: "/60254.jpg",
-        analysis_text: "抱歉，我無法提供這張照片的詳細分析或檢查。一般工地安全與質量檢查應遵循合格的專業人員在現場依據標準進行。如果需要，建議請專業的安全和質量檢查員到現場進行評估。若有任何具體問題或需改善的地方，請參考現場管理手冊或相關標準進行檢查和改進。...",
+        analysis_text: "demoAnalysis3", // This will be replaced with translated content from translations.ts
         created_at: "2025-05-13T00:25:50.000Z",
         deleted: true,
         deleted_at: "2025-05-14T08:30:00.000Z",
