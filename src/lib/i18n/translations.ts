@@ -582,7 +582,7 @@ The photo shows concrete pouring work at a construction site, with a newly poure
     analysisError: 'Fehler bei der Fotoanalyse',
     
     // Footer
-    copyright: '© {year} KI für Baustellensicherheit & Qualitätsprüfung - KI-Visionmodelle verwenden',
+    copyright: '© {year} KI für Baustellensicherheit & Qualitätsprüfung - KI-Visionmodelle verwenden - by Yu Jiang Chang, PE',
 
     // Demo Page Specific
     demoPageTitle: 'Demo-Seite - Baustellen-KI-Prüfung',
