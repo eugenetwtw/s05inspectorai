@@ -119,7 +119,7 @@ export const translations: Record<Language, TranslationKeys> = {
     analysisError: '分析照片時發生錯誤',
     
     // Footer
-    copyright: '© {year} 工地安全與品質檢查 AI - 使用 AI 視覺模型',
+    copyright: '© {year} 工地安全與品質檢查 AI - 使用 AI 視覺模型 - 張渝江技師設計',
 
     // Demo Page Specific
     demoPageTitle: '示範頁面 - 工地 AI 檢查',
@@ -277,7 +277,7 @@ export const translations: Record<Language, TranslationKeys> = {
     analysisError: '分析照片时发生错误',
     
     // Footer
-    copyright: '© {year} 工地安全与品质检查 AI - 使用 AI 视觉模型',
+    copyright: '© {year} 工地安全与品质检查 AI - 使用 AI 视觉模型 - 張渝江技師設計',
 
     // Demo Page Specific
     demoPageTitle: '示范页面 - 工地 AI 检查',
@@ -435,7 +435,7 @@ export const translations: Record<Language, TranslationKeys> = {
     analysisError: 'Error analyzing photo',
     
     // Footer
-    copyright: '© {year} Construction Site Safety & Quality Inspection AI - Using AI Vision Models',
+    copyright: '© {year} Construction Site Safety & Quality Inspection AI - Using AI Vision Models - Design by Yu Jiang Chang, PE',
 
     // Demo Page Specific
     demoPageTitle: 'Demo Page - Site AI Inspection',
